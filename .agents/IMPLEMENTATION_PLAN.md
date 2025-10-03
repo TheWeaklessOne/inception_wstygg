@@ -1,143 +1,95 @@
 # Implementation Plan for Inception-of-Things
 
-This plan expands the official requirements to outline concrete implementation steps and best practices per project part. All work must remain macOS-compatible and reproducible.
+Target environment: Ubuntu Linux (x86_64) host without sudo/root. VirtualBox 7.x and Vagrant 2.4.x are available. All Kubernetes/Docker tooling is installed inside guest VMs where root access exists. Host operations must stay within the project directory; avoid `/tmp` or system locations.
 
-## Part 1 - K3s and Vagrant (Two-Node Cluster)
+## Global Workflow
+1. Clone the repository into the designated workspace with sufficient disk space.
+2. Run `make check-env` to confirm Vagrant/VirtualBox availability.
+3. For each part, follow the steps below. All downloads (scripts, binaries) must be written under the project tree (e.g., `p1/shared/`, `p3/bin/`).
 
-### Snapshot
-- Goal: lightweight controller/worker pair (`wstyggS`, `wstyggSW`) with static IPs `192.168.56.110/111` and working K3s.
-- Success: `kubectl get nodes` shows both Ready; macOS host SSHs in with its key; `shared/node-token` + `shared/kubeconfig` exist.
+## Part 1 - K3s with Vagrant (Two Nodes)
 
-### Host Setup (macOS ARM)
-1. Install Rosetta (if prompted) and Homebrew.
-2. Run `make setup` to install Vagrant, the vagrant-qemu plugin (Apple Silicon), UTM, kubectl, jq, and helpers.
-3. Keep the `192.168.56.0/24` host-only subnet free and allowed through the firewall.
-4. Expect to run with the QEMU provider on Apple Silicon; VirtualBox's ARM builds remain preview quality and are not supported for this project.
+### Goals
+- Provision two VirtualBox VMs (`wstyggS`, `wstyggSW`) using Ubuntu 22.04 amd64 box.
+- Assign static IPs `192.168.56.110` / `.111`, enable passwordless SSH.
+- Install K3s server/agent inside guests; export token and kubeconfig to shared folder.
 
-### Host Setup (Linux/Intel macOS/Windows)
-1. Install Vagrant and a supported provider (VirtualBox recommended, libvirt acceptable).
-2. Install kubectl, jq, and curl via the platform package manager.
-3. Ensure host-only networking can allocate `192.168.56.0/24` (or adjust the Vagrantfile accordingly).
+### Steps
+1. **Directory layout**: ensure `p1/` contains `Vagrantfile`, `scripts/`, `confs/`, `shared/`.
+2. **Vagrantfile**:
+   - Use `bento/ubuntu-22.04` box, `config.vm.provider :virtualbox` with 1 vCPU/1 GB RAM.
+   - Disable synced folder except `./shared` mounted to `/vagrant/shared` (stores token/kubeconfig).
+   - Define machines `wstyggS` and `wstyggSW` with correct hostnames/IPs.
+3. **Provisioning scripts** (shell):
+   - `bootstrap_common.sh`: set hostname, run `apt-get update`, install `curl`, `ca-certificates`, `net-tools`, `nfs-common`, enable `br_netfilter`, disable swap, inject SSH keys from `/vagrant/confs/authorized_keys`.
+   - `install_k3s_server.sh`: install K3s server (latest or pinned), wait for `/var/lib/rancher/k3s/server/node-token`, copy token + kubeconfig into `/vagrant/shared/` (chmod 600).
+   - `install_k3s_agent.sh`: wait for token in shared folder, install K3s agent with `K3S_URL=https://192.168.56.110:6443`.
+4. **Verification**: create `p1/scripts/check_cluster.sh` to run `vagrant ssh wstyggS -c "sudo kubectl get nodes"` and ensure two Ready nodes.
+5. **Documentation**: update `p1/README.md` with steps to populate `confs/authorized_keys`, bring up VMs, run checks, and destroy (`vagrant destroy -f`).
 
-### Repo Layout
-- `p1/Vagrantfile` - defines both VMs, mounts `./confs` + `./shared`, pins resources to 1 vCPU/1 GB each. Apple Silicon users rely on the qemu plugin (`vagrant up` defaults to it); x86 hosts can choose VirtualBox or libvirt via `VAGRANT_DEFAULT_PROVIDER`.
-- `p1/scripts/` - shared bootstrap, server install, agent install (all POSIX `sh`).
-- `p1/confs/` - public keys (`authorized_keys`) and optional `k3s_version.txt` to pin releases.
-- `p1/shared/` - runtime artifacts populated during provisioning (token, kubeconfig).
+## Part 2 - K3s Single Node with Ingress
 
-### Provisioning Flow
-1. `bootstrap_common.sh` sets hostname, installs essentials (`curl`, `ca-certificates`, etc.), enables bridge sysctls, disables swap, appends host SSH keys, ensures `/vagrant/shared` exists.
-2. `install_k3s_server.sh` runs K3s server with explicit node IP/SAN, waits for `/var/lib/rancher/k3s/server/node-token`, copies token + kubeconfig into the shared folder (chmod 600).
-3. `install_k3s_agent.sh` waits for `shared/node-token`, reads it, joins via `https://192.168.56.110:6443`, and enables the agent service.
+### Goals
+- Single VM (`wstyggS`) running K3s server, hosting three applications behind an Ingress with host-based routing.
+- App 2 must always have exact replica count of 3.
 
-### Operations
-- `cd p1 && vagrant up` - brings cluster up; rerun `vagrant provision <name>` after script edits.
-- Verify: `vagrant ssh wstyggS --command "sudo kubectl get nodes"` or `KUBECONFIG=shared/kubeconfig kubectl get nodes` from macOS.
-- SSH from host: `ssh vagrant@192.168.56.110` using the uploaded public key.
-- Destroy: `vagrant destroy -f` clears both nodes; remove files from `shared/` if you need a clean token/kubeconfig.
+### Steps
+1. **Structure**: `p2/` mirrors layout (`Vagrantfile`, `scripts/`, `confs/`, `k8s/`).
+2. **Provisioning**: reuse Part 1 scripts (symlink or shared copies) to install K3s server.
+3. **Manifests** (store under `p2/k8s/`):
+   - Namespace `webapps`.
+   - Deployments/Services for App 1/2/3 using lightweight images.
+   - Ingress with rules for hosts `app1.com`, `app2.com`, default backend to App 3.
+4. **Testing**: add `p2/scripts/smoke.sh` to run:
+   ```sh
+   kubectl get pods -n webapps
+   curl -H 'Host: app1.com' http://192.168.56.110
+   curl -H 'Host: app2.com' http://192.168.56.110
+   curl -H 'Host: any.other' http://192.168.56.110
+   ```
+   Expect App 2 deployment to show `READY 3/3` and HTTP responses to match.
+5. **Docs**: describe how to apply manifests (`kubectl apply -f k8s/`), run smoke test, and clean up (`vagrant destroy`).
 
-### Guardrails
-- Keep scripts idempotent; safe to reapply without wiping the VM.
-- Never commit private keys; only public keys live under `confs/`.
-- Troubleshoot join issues by checking token presence and `sudo systemctl status k3s` / `k3s-agent`.
+## Part 3 - K3d & Argo CD (Without Vagrant)
 
-## Part 2 - K3s with Three Applications (Ingress Routing)
+### Goals
+- Use a dedicated VirtualBox VM (created manually or via helper script) where Docker and K3d are installed with root privilege.
+- Install Argo CD, configure GitOps application linked to public GitHub repo.
 
-### 1. Environment Setup
-- Reuse the `p2/` directory mirroring the Part 1 layout; define a single VM in `p2/Vagrantfile` with machine name `wstygg`, hostname `wstyggS`, static IP `192.168.56.110`.
-- Provision using modular scripts from Part 1 (symlink or invoke shared library scripts) to avoid duplication.
-- Declare and apply a dedicated namespace `webapps` via `kubectl apply -f p2/confs/k8s/namespace.yaml`; ensure every manifest in this part sets `metadata.namespace: webapps`.
+### Steps
+1. **VM Preparation**:
+   - Provide instructions/script under `p3/` to create a VirtualBox VM (e.g., using `VBoxManage clone` or documented manual setup). Ensure machine has 2 vCPU/4 GB RAM.
+   - Inside VM, run provisioning script (`p3/scripts/bootstrap_vm.sh`) to install Docker (system packages), enable user access, install K3d, kubectl, and Helm. Script executes within VM with sudo.
+2. **Cluster Scripts**:
+   - `create_cluster.sh`: `k3d cluster create wstygg --api-port 6550 --port "8888:80@loadbalancer"`, store kubeconfig in project folder inside VM (e.g., `/home/vagrant/projects/p3/kubeconfig`).
+   - `install_argocd.sh`: apply Argo CD manifests, wait for pods ready, port-forward or expose via LoadBalancer and note admin password retrieval command.
+3. **GitOps Application**:
+   - Maintain Argo `Application` manifest pointing to GitHub repo (`wstygg-iot-app`). Repository contains Deployment referencing `wil42/playground:v1` and Service/Ingress for port 8888.
+   - Document steps to change image tag to `v2`, push commit, and show Argo CD sync.
+4. **Validation Scripts**: create `verify_app.sh` to run inside VM:
+   ```sh
+   kubectl -n dev get deploy
+   curl http://localhost:8888/
+   ```
+5. **Cleanup**: script `destroy_cluster.sh` deletes k3d cluster, removes kubeconfig, and stops Docker containers.
 
-### 2. Application Packaging
-- Select three simple HTTP applications (e.g., Nginx static site, Python Flask, Node.js Express); package each as a container or K3s deployment manifest.
-- Store Dockerfiles and build scripts (if custom) in `p2/confs/apps/`; push images to a registry accessible from the VM (Docker Hub or local registry).
-- Maintain Kubernetes manifests per app (`deployment`, `service`) in `p2/confs/k8s/`; template with Kustomize or Helm if helpful, and ensure each manifest targets the `webapps` namespace.
+## Bonus - GitLab
 
-### 3. Ingress Configuration
-- Deploy Traefik (bundled with K3s) or custom ingress controller; confirm CRDs available.
-- Create `Ingress` manifest mapping:
-  - `Host: app1.com` -> Service `app1` (1 replica).
-  - `Host: app2.com` -> Service `app2` (Deployment replica count exactly 3).
-  - Default backend -> Service `app3`.
-- Commit Ingress and service manifests to `p2/confs/k8s/ingress.yaml`; annotate with TLS/HTTP redirect placeholders for future enhancements, and set `namespace: webapps` on the Ingress resource.
+1. Use existing VM from Part 3; ensure resources (>=8 GB RAM).
+2. Script `install_gitlab.sh` runs Helm install with values stored in `bonus/confs/gitlab-values.yaml` (trim services to essentials).
+3. Document creation of PAT, Kubernetes Secret, and Argo CD application update.
+4. Provide uninstall script to remove release and namespace.
 
-### 4. DNS / Host Overrides
-- Document macOS `/etc/hosts` additions (`app1.com`, `app2.com` -> `192.168.56.110`); test the default backend using a non-matching host header such as `curl -H 'Host: unknown.test' http://192.168.56.110`.
-- Provide a helper script `p2/scripts/update_hosts.sh` that first backs up `/etc/hosts` with a timestamped copy, appends/removes entries safely using `sudo tee`, and offers a cleanup routine to restore the previous state.
+## Documentation Updates
+- Rewrite top-level `README.md` to emphasize host requirements (Vagrant/VirtualBox only) and reference per-part instructions.
+- Each part gets its own README with provisioning, verification, and cleanup steps.
+- Add note that all downloads happen inside project folders.
 
-### 5. Verification Checklist
-- `kubectl get pods -n webapps` to confirm `app2` has exactly three replicas; implement a CI hook or Kustomize patch preventing drift.
-- Execute curl smoke tests with explicit host headers; script them in `p2/scripts/smoke_tests.sh` and ensure exit codes bubble up.
-- Capture screenshots or terminal logs demonstrating routing for defense documentation.
+## Validation Checklist
+- `make check-env` passes (Linux/x86_64, Vagrant, VirtualBox detected).
+- Part 1: `kubectl get nodes` (inside `wstyggS`) shows two Ready nodes; SSH from host using key works.
+- Part 2: curl tests confirm Ingress routing; App 2 shows exactly 3 replicas.
+- Part 3: k3d cluster runs inside VM, Argo CD syncs GitHub repository, version flip verified via curl.
+- Bonus (optional): GitLab deployment accessible and Argo CD continues to sync.
 
-### 6. Best Practices
-- Externalize configuration (ports, image tags) via ConfigMaps or Helm `values.yaml` to simplify updates.
-- Use readiness and liveness probes on deployments to ensure stable ingress routing.
-- Enforce resource limits/requests within the `webapps` namespace to prevent any single app from exhausting cluster capacity.
-
-## Part 3 - K3d and Argo CD (GitOps Pipeline)
-
-### 1. Host Tooling Script
-- Author `p3/scripts/setup_host_macos.sh` to install Docker Desktop (or Colima + k3d-compatible Docker daemon), K3d, kubectl, Argo CD CLI, Helm via Homebrew.
-- Script should check for Rosetta, set Docker Desktop to use `colima`/`docker` CLI context, and start the Docker service if stopped.
-
-### 2. Repository Layout
-- `p3/` contains `scripts/`, `confs/`, and documentation; no Vagrantfile needed if using native macOS Docker.
-- Provide `p3/scripts/create_cluster.sh` that creates a K3d cluster with one server, two agents (if needed), ingress port mappings, and nodes named `wstygg-...` for consistency.
-
-### 3. Cluster Bootstrapping
-- Script cluster creation with `k3d cluster create wstygg --agents 1 --api-port 6550 -p "8080:80@loadbalancer" -p "8888:8888@loadbalancer"` and store kubeconfig under `p3/confs/kubeconfig`.
-- Apply namespace manifests (`argocd`, `dev`) from `p3/confs/namespaces.yaml`.
-- Install Argo CD via Helm or official manifests; keep values file in `p3/confs/argocd/values.yaml` with admin password secret handling instructions.
-
-### 4. GitOps Application Setup
-- Create or fork a public GitHub repository named `wstygg-iot-app` (or similar) containing Kubernetes manifests.
-- Define Argo CD Application manifest pointing to the repo, target revision `main`, and namespace `dev`.
-- Include deployment manifest referencing Docker image tags `v1` and `v2` (either Wil's `wil42/playground` or custom image hosted on Docker Hub).
-
-### 5. Automation & Testing
-- Provide script `p3/scripts/deploy_argocd.sh` to apply Argo CD manifests and port-forward the UI (macOS-compatible using `kubectl port-forward --address 0.0.0.0` when needed).
-- Document retrieval of the initial Argo CD admin password with `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`, and include instructions to rotate it immediately via `argocd account update-password`.
-- Document workflow to switch application version: edit Git repo, commit/push, watch Argo CD sync, verify with `curl http://localhost:8888/`.
-- Implement smoke tests verifying namespace health and Argo CD Application status using `argocd app get`.
-
-### 6. Best Practices
-- Store sensitive data via Kubernetes Secrets managed through Sealed Secrets or SOPS; never commit plain-text passwords.
-- Configure Argo CD RBAC for read-only evaluator access; document admin password rotation procedure.
-- Add Makefile targets (`make cluster`, `make clean`) to simplify host commands and ensure idempotence.
-
-## Bonus - GitLab Integration
-
-### 1. Prerequisites
-- Ensure host Docker runtime has sufficient resources (>= 8 GB RAM) for GitLab; document expectation in README.
-- Install Helm (already available) and add GitLab chart repo (`helm repo add gitlab https://charts.gitlab.io`).
-
-### 2. Namespace & Storage
-- Create `gitlab` namespace and configure persistent storage class (use local-path provisioner or K3d external volume); document volume directory on macOS (`~/Library/Containers/com.docker.docker/Data/vms/...`).
-- For durability, mount host directories via K3d volume flags (`--volume $HOME/gitlab-data:/var/lib/rancher/k3s/storage`).
-
-### 3. Deployment Steps
-- Recreate (or update) the K3d cluster to expose the GitOps application on host port 9999 in addition to the existing mappings, for example: `k3d cluster create wstygg --agents 1 --api-port 6550 -p "8080:80@loadbalancer" -p "8888:8888@loadbalancer" -p "9999:80@loadbalancer"` (delete the old cluster first if needed).
-- Craft Helm values file `bonus/confs/gitlab/values.yaml` tuned for resource limits, disabling unnecessary components (registry, monitoring) if not required.
-- Install GitLab with `helm upgrade --install gitlab gitlab/gitlab -f values.yaml -n gitlab`; monitor pods until Ready.
-- Configure Ingress to expose GitLab via host-only mapping (e.g., `gitlab.local`); update macOS `/etc/hosts` accordingly.
-
-### 4. GitOps Integration
-- Mirror the existing GitHub repo into GitLab or host manifests directly in GitLab; update Argo CD Application source to point to GitLab repository using HTTPS with PAT stored in Secret.
-  - Create a Kubernetes secret (e.g., `argocd-repo-secret`) containing the Personal Access Token: `kubectl -n argocd create secret generic argocd-repo-secret --from-literal=username=<gitlab-username> --from-literal=password=<gitlab-pat>` and reference it in the Argo CD `Application` `spec.source.repoURL` credentials per the [Argo CD repository access docs](https://argo-cd.readthedocs.io/en/stable/user-guide/private-repositories/).
-- Set up GitLab CI (optional) to build and push Docker images tagged `v1`/`v2`; document pipeline triggers.
-
-### 5. Validation
-- Log into GitLab web UI, confirm project availability, and demonstrate Argo CD syncing from GitLab.
-- Run end-to-end test: modify manifest in GitLab, trigger Argo CD refresh, verify application update at `http://localhost:9999/`.
-
-### 6. Best Practices
-- Enable GitLab backups (scheduled job writing to host-mounted volume) and document restore steps.
-- Monitor resource usage with `kubectl top` (install metrics server if needed) to ensure cluster stability.
-- Use HTTPS for GitLab ingress (self-signed cert acceptable) and document trust-store configuration on macOS.
-
-## Cross-Cutting Practices
-- Maintain shared utility scripts under `.agents/scripts/` (if needed) and reference them from p1/p2/p3 to avoid drift.
-- Enforce shell linting (e.g., `shellcheck`) and YAML validation (`yamllint`) via pre-commit hooks compatible with macOS Python.
-- Document teardown commands (`vagrant destroy`, `k3d cluster delete wstygg`) to ensure clean state between defenses.
-- Keep changelog in `.agents/CHANGELOG.md` capturing major updates to infrastructure and documentation.
+Following this plan keeps host untouched beyond VirtualBox/Vagrant usage and confines all package installation to guest machines.
