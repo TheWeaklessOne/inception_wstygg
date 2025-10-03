@@ -1,3 +1,4 @@
+require 'fileutils'
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -8,15 +9,18 @@ WORKER_NAME = 'wstyggSW'
 SERVER_IP = '192.168.56.110'
 WORKER_IP = '192.168.56.111'
 BOX_NAME = 'bento/ubuntu-22.04'
-BOX_VERSION = '202310.04.0'
+BOX_VERSION = '202407.23.0'
 SHARED_DIR = '/vagrant/shared'
 
+VM_BASE_FOLDER = File.join(Dir.pwd, 'vm-data')
+FileUtils.mkdir_p(VM_BASE_FOLDER)
 Vagrant.configure('2') do |config|
   config.vm.box = BOX_NAME
   config.vm.box_version = BOX_VERSION
   config.ssh.insert_key = false
 
   config.vm.provider :virtualbox do |vb|
+    vb.customize ['setproperty', 'machinefolder', VM_BASE_FOLDER]
     vb.memory = 1024
     vb.cpus = 1
   end
