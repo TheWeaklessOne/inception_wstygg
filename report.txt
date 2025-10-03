@@ -1,0 +1,15 @@
+Operating system                   [INFO] Linux
+CPU architecture                   [INFO] x86_64
+Linux requirement                  [32m[OK][0m
+x86_64 requirement                 [32m[OK][0m
+CPU virtualization flags           [32m[OK][0m vmx/svm flag detected
+Host virtualization layer          [32m[OK][0m Bare metal or undetected
+Vagrant                            [32m[OK][0m Vagrant 2.4.7
+VirtualBox provider                [32m[OK][0m Version 7.0.26r168464
+kubectl                            [33m[WARN][0m Not found; needed for cluster management
+Docker                             [32m[OK][0m daemon reachable
+k3d                                [33m[WARN][0m Not found; required for Part 3
+Helm                               [33m[WARN][0m Not found; recommended for bonus
+User in libvirt group              [33m[WARN][0m Add current user to libvirt for provider access
+User in docker group               [33m[WARN][0m Add current user to docker group
+Effective UID                      [INFO] 104927
