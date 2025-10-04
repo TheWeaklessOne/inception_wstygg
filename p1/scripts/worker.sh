@@ -32,6 +32,21 @@ if [ ! -s "$TOKEN_PATH" ]; then
   exit 1
 fi
 
+echo "Waiting for K3s server API to be ready at https://${SERVER_IP}:6443 ..."
+for i in $(seq 1 60); do
+  if curl -sk --max-time 5 "https://${SERVER_IP}:6443/ping" >/dev/null 2>&1; then
+    echo "[OK] K3s server API is ready (took ${i}s)"
+    break
+  fi
+  echo -n "."
+  sleep 5
+done
+
+if ! curl -sk --max-time 5 "https://${SERVER_IP}:6443/ping" >/dev/null 2>&1; then
+  echo ""
+  echo "[WARN] K3s server API not responding, but attempting join anyway..."
+fi
+
 echo "Installing K3s agent on ${NODE_NAME} (${NODE_IP}), joining https://${SERVER_IP}:6443 ..."
 curl -sfL https://get.k3s.io | \
   K3S_URL="https://${SERVER_IP}:6443" \

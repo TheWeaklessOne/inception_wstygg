@@ -64,19 +64,33 @@ fi
 
 systemctl enable k3s >/dev/null 2>&1 || true
 
-echo "[INFO] Waiting for K3s server to be ready..."
+echo "[INFO] Waiting for K3s server service to be active..."
 for i in $(seq 1 30); do
   if systemctl is-active --quiet k3s; then
     echo "[OK] K3s server is active (took ${i}s)"
-    exit 0
+    break
   fi
   echo -n "."
   sleep 1
 done
 
 echo ""
-if systemctl is-active --quiet k3s; then
-  echo "[OK] K3s server is active"
-else
+if ! systemctl is-active --quiet k3s; then
   echo "[WARN] K3s server may still be starting. Check: sudo systemctl status k3s"
+  exit 1
 fi
+
+echo "[INFO] Waiting for K3s API to be ready at https://${SERVER_IP}:6443 ..."
+for i in $(seq 1 60); do
+  if curl -sk --max-time 5 "https://${SERVER_IP}:6443/ping" >/dev/null 2>&1; then
+    echo "[OK] K3s API is ready and responding (took ${i}s)"
+    exit 0
+  fi
+  echo -n "."
+  sleep 5
+done
+
+echo ""
+echo "[WARN] K3s API did not respond to /ping within expected time"
+echo "[INFO] Server may still be initializing. Check: curl -sk https://${SERVER_IP}:6443/ping"
+exit 1
