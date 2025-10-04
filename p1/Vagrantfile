@@ -1,6 +1,12 @@
 # Force Vagrant to use local directories (no sudo, limited disk quota)
 ENV['VAGRANT_HOME'] = File.expand_path('./.vagrant.d', __dir__)
 
+# VM Resource Configuration
+# Subject requirement: 1 CPU, 512-1024 MB RAM
+# Can be increased for testing, but must comply with subject for evaluation
+VM_MEMORY = "1024"  # RAM in MB (subject: 512 or 1024)
+VM_CPUS = 1         # Number of CPUs (subject: 1)
+
 Vagrant.configure("2") do |config|
   BOX = "ubuntu/jammy64"
 
@@ -15,8 +21,8 @@ Vagrant.configure("2") do |config|
     node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
 
     node.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"  # Temporarily increased for testing
-      vb.cpus = 2         # Temporarily increased for testing
+      vb.memory = VM_MEMORY
+      vb.cpus = VM_CPUS
     end
 
     node.vm.provision "shell",
@@ -35,8 +41,8 @@ Vagrant.configure("2") do |config|
     node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
 
     node.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"  # Temporarily increased for testing
-      vb.cpus = 2         # Temporarily increased for testing
+      vb.memory = VM_MEMORY
+      vb.cpus = VM_CPUS
     end
 
     node.vm.provision "shell",

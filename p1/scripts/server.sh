@@ -51,20 +51,32 @@ fi
 
 echo "[INFO] Waiting for K3s API to be fully ready at https://${SERVER_IP}:6443 ..."
 echo "[INFO] Checking /readyz endpoint (required for agent to retrieve certificates)..."
-for i in $(seq 1 120); do
+echo "[INFO] This may take several minutes on minimal resources (1 CPU/1 GB RAM)..."
+
+# Wait up to 15 minutes for full API readiness
+# On minimal resources, SQLite initialization can be slow
+for i in $(seq 1 180); do
   if curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
+    echo ""
     echo "[OK] K3s API is fully ready and can serve agent requests (took $((i*5))s)"
     break
   fi
-  echo -n "."
+  # Progress indicator every 30 seconds
+  if [ $((i % 6)) -eq 0 ]; then
+    echo ""
+    echo "[INFO] Still waiting for API readiness... ($((i*5))s elapsed)"
+  else
+    echo -n "."
+  fi
   sleep 5
 done
 
 echo ""
 if ! curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
-  echo "[WARN] K3s API /readyz did not respond within expected time (10 minutes)"
+  echo "[ERROR] K3s API /readyz did not respond within 15 minutes"
   echo "[INFO] Server may still be initializing. Check: curl -sk https://${SERVER_IP}:6443/readyz"
   echo "[INFO] This can happen on minimal resources due to SQLite initialization"
+  echo "[INFO] Try increasing VM resources or wait and check manually"
   exit 1
 fi
 

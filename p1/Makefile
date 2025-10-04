@@ -32,9 +32,13 @@ check:
 	@vagrant ssh wstyggS -c "hostname" | grep -q "wstyggS" && echo "✅ SSH to server works" || echo "❌ SSH to server failed"
 	@vagrant ssh wstyggSW -c "hostname" | grep -q "wstyggSW" && echo "✅ SSH to worker works" || echo "❌ SSH to worker failed"
 	@echo ""
-	@echo "[6/6] Verifying kubectl from host..."
-	@[ -f shared/kubeconfig.yaml ] && echo "✅ kubeconfig.yaml exists" || (echo "❌ kubeconfig.yaml not found" && exit 1)
-	@export KUBECONFIG=$$(pwd)/shared/kubeconfig.yaml && kubectl get nodes >/dev/null 2>&1 && echo "✅ kubectl from host works" || echo "⚠️  kubectl not configured (install kubectl or wait for cluster)"
+	@echo "[6/6] Verifying kubeconfig export..."
+	@[ -f shared/kubeconfig.yaml ] && echo "✅ kubeconfig.yaml exported" || (echo "❌ kubeconfig.yaml not found" && exit 1)
+	@grep -q "192.168.56.110:6443" shared/kubeconfig.yaml && echo "✅ kubeconfig server URL correct" || echo "❌ kubeconfig server URL incorrect"
+	@echo ""
+	@echo "💡 To use kubectl from host, install kubectl and run:"
+	@echo "   export KUBECONFIG=$$(pwd)/shared/kubeconfig.yaml"
+	@echo "   kubectl get nodes"
 	@echo ""
 
 doctor:
