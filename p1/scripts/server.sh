@@ -30,6 +30,45 @@ else
     --tls-san "$SERVER_IP"
 fi
 
+
+systemctl enable k3s >/dev/null 2>&1 || true
+
+echo "[INFO] Waiting for K3s server service to be active..."
+for i in $(seq 1 30); do
+  if systemctl is-active --quiet k3s; then
+    echo "[OK] K3s server is active (took ${i}s)"
+    break
+  fi
+  echo -n "."
+  sleep 1
+done
+
+echo ""
+if ! systemctl is-active --quiet k3s; then
+  echo "[WARN] K3s server may still be starting. Check: sudo systemctl status k3s"
+  exit 1
+fi
+
+echo "[INFO] Waiting for K3s API to be fully ready at https://${SERVER_IP}:6443 ..."
+echo "[INFO] Checking /readyz endpoint (required for agent to retrieve certificates)..."
+for i in $(seq 1 120); do
+  if curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
+    echo "[OK] K3s API is fully ready and can serve agent requests (took $((i*5))s)"
+    break
+  fi
+  echo -n "."
+  sleep 5
+done
+
+echo ""
+if ! curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
+  echo "[WARN] K3s API /readyz did not respond within expected time (10 minutes)"
+  echo "[INFO] Server may still be initializing. Check: curl -sk https://${SERVER_IP}:6443/readyz"
+  echo "[INFO] This can happen on minimal resources due to SQLite initialization"
+  exit 1
+fi
+
+# Now that API is fully ready, export kubeconfig and token for the worker
 # Wait for kubeconfig to be generated
 for i in $(seq 1 60); do
   [ -f "$KUBECONFIG_SRC" ] && break
@@ -62,35 +101,4 @@ else
   exit 1
 fi
 
-systemctl enable k3s >/dev/null 2>&1 || true
-
-echo "[INFO] Waiting for K3s server service to be active..."
-for i in $(seq 1 30); do
-  if systemctl is-active --quiet k3s; then
-    echo "[OK] K3s server is active (took ${i}s)"
-    break
-  fi
-  echo -n "."
-  sleep 1
-done
-
-echo ""
-if ! systemctl is-active --quiet k3s; then
-  echo "[WARN] K3s server may still be starting. Check: sudo systemctl status k3s"
-  exit 1
-fi
-
-echo "[INFO] Waiting for K3s API to be ready at https://${SERVER_IP}:6443 ..."
-for i in $(seq 1 60); do
-  if curl -sk --max-time 5 "https://${SERVER_IP}:6443/ping" >/dev/null 2>&1; then
-    echo "[OK] K3s API is ready and responding (took ${i}s)"
-    exit 0
-  fi
-  echo -n "."
-  sleep 5
-done
-
-echo ""
-echo "[WARN] K3s API did not respond to /ping within expected time"
-echo "[INFO] Server may still be initializing. Check: curl -sk https://${SERVER_IP}:6443/ping"
-exit 1
+exit 0

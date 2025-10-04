@@ -32,23 +32,25 @@ if [ ! -s "$TOKEN_PATH" ]; then
   exit 1
 fi
 
-echo "Waiting for K3s server API to be ready at https://${SERVER_IP}:6443 ..."
-for i in $(seq 1 60); do
-  if curl -sk --max-time 5 "https://${SERVER_IP}:6443/ping" >/dev/null 2>&1; then
-    echo "[OK] K3s server API is ready (took ${i}s)"
+echo "Waiting for K3s server API to be fully ready at https://${SERVER_IP}:6443 ..."
+for i in $(seq 1 120); do
+  if curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
+    echo "[OK] K3s server API is fully ready (took $((i*5))s)"
     break
   fi
   echo -n "."
   sleep 5
 done
 
-if ! curl -sk --max-time 5 "https://${SERVER_IP}:6443/ping" >/dev/null 2>&1; then
+if ! curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
   echo ""
-  echo "[WARN] K3s server API not responding, but attempting join anyway..."
+  echo "[WARN] K3s server API /readyz not responding, but attempting join anyway..."
 fi
 
 echo "Installing K3s agent on ${NODE_NAME} (${NODE_IP}), joining https://${SERVER_IP}:6443 ..."
+# Avoid installer blocking on systemd start; start the service ourselves after install
 curl -sfL https://get.k3s.io | \
+  INSTALL_K3S_SKIP_START=true \
   K3S_URL="https://${SERVER_IP}:6443" \
   K3S_TOKEN_FILE="$TOKEN_PATH" \
   sh -s - agent \
@@ -56,9 +58,10 @@ curl -sfL https://get.k3s.io | \
     --node-ip "$NODE_IP"
 
 systemctl enable k3s-agent >/dev/null 2>&1 || true
+systemctl start k3s-agent >/dev/null 2>&1 || true
 
 echo "[INFO] Waiting for K3s agent to start..."
-for i in $(seq 1 30); do
+for i in $(seq 1 180); do
   if systemctl is-active --quiet k3s-agent; then
     echo "[OK] K3s agent is active (took ${i}s)"
     exit 0
