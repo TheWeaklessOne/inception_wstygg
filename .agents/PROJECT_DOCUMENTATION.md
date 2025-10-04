@@ -2,6 +2,11 @@
 
 This document summarizes the subject requirements and our execution strategy. Always refer to `.agents/en.subject.txt` during evaluation.
 
+## Development Environment (Local Author Machine)
+- Apple Silicon macOS (ARM64) used for writing and static validation.
+- VirtualBox/Vagrant are unavailable natively; provisioning scripts are crafted but not executed here.
+- All runtime validation and defense will happen on the evaluator host described below.
+
 ## Host Environment (Evaluator Machine)
 - Ubuntu Linux (x86_64), limited disk quota, no sudo/root escalation.
 - Oracle VirtualBox 7.x and Vagrant 2.4.x are pre-installed and usable by the current user.
@@ -21,10 +26,10 @@ Each part provisions its own virtual machines where root access is available dur
 ### Part 1 - K3s with Vagrant (Two Nodes)
 - Bring up two VirtualBox VMs via Vagrant with 1 vCPU/1 GB RAM each.
 - Assign static IPs `192.168.56.110` (`wstyggS`) and `192.168.56.111` (`wstyggSW`).
-- Configure passwordless SSH by injecting public keys from `p1/confs/authorized_keys` into the guests.
-- Install K3s server on `wstyggS`, agent on `wstyggSW`; ensure worker auto-joins using the shared token.
-- Export kubeconfig and node token into `p1/shared/` for host-side inspection if needed.
-- Success = `kubectl get nodes` (run inside `wstyggS`) shows both nodes Ready.
+- Passwordless SSH works out of the box via Vagrant's default key; optionally trust additional keys from `p1/confs/authorized_keys`.
+- Install K3s server on `wstyggS`, agent on `wstyggSW`; ensure the worker auto-joins using the shared token.
+- Export kubeconfig and node token into `p1/shared/` for host-side use.
+- Success = `kubectl --kubeconfig=p1/shared/kubeconfig.yaml get nodes` on the host shows both nodes Ready.
 
 ### Part 2 - K3s Single VM with Ingress
 - Provision a single VirtualBox VM running K3s server mode.

@@ -1,0 +1,51 @@
+# Force Vagrant to use local directories (no sudo, limited disk quota)
+ENV['VAGRANT_HOME'] = File.expand_path('./.vagrant.d', __dir__)
+
+Vagrant.configure("2") do |config|
+  BOX = "ubuntu/jammy64"
+
+  # Global defaults
+  config.vm.box = BOX
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  # K3s Server VM
+  config.vm.define "wstyggS" do |node|
+    node.vm.hostname = "wstyggS"
+    node.vm.network "private_network", ip: "192.168.56.110"
+    node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+
+    node.vm.provision "shell",
+      path: "scripts/server.sh",
+      privileged: true,
+      env: {
+        "SERVER_IP" => "192.168.56.110",
+        "NODE_NAME" => "wstyggS"
+      }
+  end
+
+  # K3s Worker VM
+  config.vm.define "wstyggSW" do |node|
+    node.vm.hostname = "wstyggSW"
+    node.vm.network "private_network", ip: "192.168.56.111"
+    node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+
+    node.vm.provision "shell",
+      path: "scripts/worker.sh",
+      privileged: true,
+      env: {
+        "SERVER_IP" => "192.168.56.110",
+        "NODE_IP" => "192.168.56.111",
+        "NODE_NAME" => "wstyggSW"
+      }
+  end
+end

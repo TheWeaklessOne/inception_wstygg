@@ -10,22 +10,25 @@ Target environment: Ubuntu Linux (x86_64) host without sudo/root. VirtualBox 7.x
 ## Part 1 - K3s with Vagrant (Two Nodes)
 
 ### Goals
-- Provision two VirtualBox VMs (`wstyggS`, `wstyggSW`) using Ubuntu 22.04 amd64 box.
-- Assign static IPs `192.168.56.110` / `.111`, enable passwordless SSH.
-- Install K3s server/agent inside guests; export token and kubeconfig to shared folder.
+- Bring up two VirtualBox guests (`wstyggS`, `wstyggSW`) on Ubuntu 22.04 with the subject IPs.
+- Let Vagrant handle passwordless SSH (additional keys optional).
+- Install K3s server/agent and drop cluster artefacts (token, kubeconfig) into a shared folder for host-side kubectl.
 
 ### Steps
-1. **Directory layout**: ensure `p1/` contains `Vagrantfile`, `scripts/`, `confs/`, `shared/`.
+1. **Directory layout**: create `p1/` with `Vagrantfile`, a `scripts/` directory (contains shell provisioners), and an empty `shared/` folder tracked in git. Keep `confs/` only if we later store extra configuration such as custom `authorized_keys`.
 2. **Vagrantfile**:
-   - Use `bento/ubuntu-22.04` box, `config.vm.provider :virtualbox` with 1 vCPU/1 GB RAM.
-   - Disable synced folder except `./shared` mounted to `/vagrant/shared` (stores token/kubeconfig).
-   - Define machines `wstyggS` and `wstyggSW` with correct hostnames/IPs.
-3. **Provisioning scripts** (shell):
-   - `bootstrap_common.sh`: set hostname, run `apt-get update`, install `curl`, `ca-certificates`, `net-tools`, `nfs-common`, enable `br_netfilter`, disable swap, inject SSH keys from `/vagrant/confs/authorized_keys`.
-   - `install_k3s_server.sh`: install K3s server (latest or pinned), wait for `/var/lib/rancher/k3s/server/node-token`, copy token + kubeconfig into `/vagrant/shared/` (chmod 600).
-   - `install_k3s_agent.sh`: wait for token in shared folder, install K3s agent with `K3S_URL=https://192.168.56.110:6443`.
-4. **Verification**: create `p1/scripts/check_cluster.sh` to run `vagrant ssh wstyggS -c "sudo kubectl get nodes"` and ensure two Ready nodes.
-5. **Documentation**: update `p1/README.md` with steps to populate `confs/authorized_keys`, bring up VMs, run checks, and destroy (`vagrant destroy -f`).
+   - Base both machines on `bento/ubuntu-22.04` (or another current LTS) with `config.vm.provider :virtualbox` set to 1 vCPU / 1024 MB RAM.
+   - Declare the private network IPs `192.168.56.110` (server) and `192.168.56.111` (agent).
+   - Mount `./shared` to `/vagrant_shared` (`create: true`) so provisioning scripts can exchange the node token and kubeconfig.
+   - Rely on Vagrant's default SSH key for passwordless access; if we need to trust additional keys later, add a simple inline provisioner that appends `/vagrant/confs/authorized_keys` when the file exists.
+3. **Provisioning scripts** (two small shell scripts keep things lightweight):
+   - `scripts/server.sh`: update apt cache, install `curl`, run the official K3s installer, wait for `/var/lib/rancher/k3s/server/node-token`, then copy it to `/vagrant_shared/k3s_token` and copy `/etc/rancher/k3s/k3s.yaml` to `/vagrant_shared/kubeconfig.yaml` after replacing the localhost server URL with `https://192.168.56.110:6443`. Set both artefacts to mode `600`.
+   - `scripts/worker.sh`: wait for `/vagrant_shared/k3s_token`, then invoke the installer with `K3S_URL=https://192.168.56.110:6443` and `K3S_TOKEN_FILE=/vagrant_shared/k3s_token`, passing `--node-name`/`--node-ip` flags and exiting early if the agent service already runs.
+   - Keep the scripts idempotent (e.g. skip reinstall if `k3s` already running) to support `vagrant provision`.
+4. **Verification artefacts**:
+   - After `vagrant up`, run `kubectl --kubeconfig=p1/shared/kubeconfig.yaml get nodes` on the host to confirm both nodes are Ready.
+   - Optionally ship a helper script `scripts/check_cluster.sh` that wraps the command above for quicker testing.
+5. **Documentation**: update `p1/README.md` with instructions to add personal SSH keys (if desired), run `vagrant up`, use the exported kubeconfig, and destroy the lab via `vagrant destroy -f`.
 
 ## Part 2 - K3s Single Node with Ingress
 
@@ -87,7 +90,7 @@ Target environment: Ubuntu Linux (x86_64) host without sudo/root. VirtualBox 7.x
 
 ## Validation Checklist
 - `make check-env` passes (Linux/x86_64, Vagrant, VirtualBox detected).
-- Part 1: `kubectl get nodes` (inside `wstyggS`) shows two Ready nodes; SSH from host using key works.
+- Part 1: `kubectl --kubeconfig=p1/shared/kubeconfig.yaml get nodes` on the host shows two Ready nodes; `vagrant ssh` still works without a password.
 - Part 2: curl tests confirm Ingress routing; App 2 shows exactly 3 replicas.
 - Part 3: k3d cluster runs inside VM, Argo CD syncs GitHub repository, version flip verified via curl.
 - Bonus (optional): GitLab deployment accessible and Argo CD continues to sync.
