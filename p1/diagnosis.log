@@ -10,35 +10,261 @@ above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
 
 === Server (wstyggS) Network Interfaces ===
-tcsetattr: Input/output error
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:c3:42:75:69:17 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 metric 100 brd 10.0.2.255 scope global dynamic enp0s3
+       valid_lft 86262sec preferred_lft 86262sec
+    inet6 fe80::c3:42ff:fe75:6917/64 scope link 
+       valid_lft forever preferred_lft forever
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:ae:5f:4c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.110/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:feae:5f4c/64 scope link 
+       valid_lft forever preferred_lft forever
+4: flannel.1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UNKNOWN group default 
+    link/ether 32:21:ea:c7:9d:b3 brd ff:ff:ff:ff:ff:ff
+    inet 10.42.0.0/32 scope global flannel.1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::3021:eaff:fec7:9db3/64 scope link 
+       valid_lft forever preferred_lft forever
+5: cni0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UP group default qlen 1000
+    link/ether de:78:60:3e:87:34 brd ff:ff:ff:ff:ff:ff
+    inet 10.42.0.1/24 brd 10.42.0.255 scope global cni0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::dc78:60ff:fe3e:8734/64 scope link 
+       valid_lft forever preferred_lft forever
+6: vethf96516d0@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master cni0 state UP group default qlen 1000
+    link/ether 82:e1:0b:58:00:c1 brd ff:ff:ff:ff:ff:ff link-netns cni-7b24e100-71f1-f76b-48a0-dec2b795649c
+    inet6 fe80::80e1:bff:fe58:c1/64 scope link 
+       valid_lft forever preferred_lft forever
+7: vetha9a847c0@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master cni0 state UP group default qlen 1000
+    link/ether 76:da:5e:92:73:21 brd ff:ff:ff:ff:ff:ff link-netns cni-59a1701a-8b87-f469-66eb-81cd9bfb5335
+    inet6 fe80::74da:5eff:fe92:7321/64 scope link 
+       valid_lft forever preferred_lft forever
+8: vethf6bffacb@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master cni0 state UP group default qlen 1000
+    link/ether f6:c4:d6:6e:10:5a brd ff:ff:ff:ff:ff:ff link-netns cni-adf11578-a6eb-7b5b-b0e5-abf764196625
+    inet6 fe80::f4c4:d6ff:fe6e:105a/64 scope link 
+       valid_lft forever preferred_lft forever
+11: vethccac3661@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master cni0 state UP group default qlen 1000
+    link/ether 22:03:02:66:bb:db brd ff:ff:ff:ff:ff:ff link-netns cni-fc742995-f797-875b-298f-92c3ecda81dc
+    inet6 fe80::bc97:f1ff:fee0:a626/64 scope link 
+       valid_lft forever preferred_lft forever
+12: veth3e3fcc18@if2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master cni0 state UP group default qlen 1000
+    link/ether 02:01:cc:39:de:7c brd ff:ff:ff:ff:ff:ff link-netns cni-574d6e49-ae63-c036-9ade-30e783c6cac7
+    inet6 fe80::8014:c8ff:fec9:8ecf/64 scope link 
+       valid_lft forever preferred_lft forever
 
 === Worker (wstyggSW) Network Interfaces ===
-tcsetattr: Input/output error
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 02:c3:42:75:69:17 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 metric 100 brd 10.0.2.255 scope global dynamic enp0s3
+       valid_lft 86341sec preferred_lft 86341sec
+    inet6 fe80::c3:42ff:fe75:6917/64 scope link 
+       valid_lft forever preferred_lft forever
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:bf:3a:7d brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.111/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:febf:3a7d/64 scope link 
+       valid_lft forever preferred_lft forever
 
 === Server K3s Service Status ===
-tcsetattr: Input/output error
+● k3s.service - Lightweight Kubernetes
+     Loaded: loaded (/etc/systemd/system/k3s.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sat 2025-10-04 18:01:00 UTC; 1min 48s ago
+       Docs: https://k3s.io
+   Main PID: 2722 (k3s-server)
+      Tasks: 91
+     Memory: 613.8M
+        CPU: 17.086s
+     CGroup: /system.slice/k3s.service
+             ├─2722 "/usr/local/bin/k3s server" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
+             ├─2750 "containerd " "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
+             ├─3537 /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2/bin/containerd-shim-runc-v2 -namespace k8s.io -id f8416d4d449879053c4681dcdbb465af14eb8068f533390f5637c7c3da516093 -address /run/k3s/containerd/containerd.sock
+             ├─3538 /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2/bin/containerd-shim-runc-v2 -namespace k8s.io -id 07b1a7249bb7b67d48bf65cadd1f71a08b5e4126b10ea6f362179efc6467bc22 -address /run/k3s/containerd/containerd.sock
+             ├─3539 /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2/bin/containerd-shim-runc-v2 -namespace k8s.io -id 8806f31ab92615c31d42f15e31f173060efa0022ea57b0222f7d31f779bdafd8 -address /run/k3s/containerd/containerd.sock
+             ├─4527 /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2/bin/containerd-shim-runc-v2 -namespace k8s.io -id 10b7c53d9fc0a186eab005aed701482297fe78c919292d5215db542f0d385f07 -address /run/k3s/containerd/containerd.sock
+             └─4528 /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2/bin/containerd-shim-runc-v2 -namespace k8s.io -id 3cd42dcb1c6ade6c69de9319034b0c967afd6638f2f035932f2a7ba049c82eaa -address /run/k3s/containerd/containerd.sock
+
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.961009    2722 shared_informer.go:350] "Waiting for caches to sync" controller="resource quota"
+Oct 04 18:02:14 wstyggS k3s[2722]: I1004 18:02:14.599451    2722 shared_informer.go:350] "Waiting for caches to sync" controller="garbage collector"
+Oct 04 18:02:18 wstyggS k3s[2722]: I1004 18:02:18.922146    2722 shared_informer.go:357] "Caches are synced" controller="resource quota"
+Oct 04 18:02:19 wstyggS k3s[2722]: I1004 18:02:19.100411    2722 shared_informer.go:357] "Caches are synced" controller="garbage collector"
+Oct 04 18:02:21 wstyggS k3s[2722]: I1004 18:02:21.928863    2722 pod_startup_latency_tracker.go:104] "Observed pod startup duration" pod="kube-system/svclb-traefik-f53d626f-k6cr2" podStartSLOduration=13.425151357 podStartE2EDuration="18.92418818s" podCreationTimestamp="2025-10-04 18:02:03 +0000 UTC" firstStartedPulling="2025-10-04 18:02:06.331480877 +0000 UTC m=+73.033407415" lastFinishedPulling="2025-10-04 18:02:11.8305177 +0000 UTC m=+78.532444238" observedRunningTime="2025-10-04 18:02:21.921694383 +0000 UTC m=+88.623620922" watchObservedRunningTime="2025-10-04 18:02:21.92418818 +0000 UTC m=+88.626114719"
+Oct 04 18:02:22 wstyggS k3s[2722]: I1004 18:02:22.248266    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="Service" apiVersion="v1" type="Normal" reason="UpdatedLoadBalancer" message="Updated LoadBalancer with new IPs: [] -> [192.168.56.110]"
+Oct 04 18:02:22 wstyggS k3s[2722]: I1004 18:02:22.878961    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="Service" apiVersion="v1" type="Normal" reason="UpdatedLoadBalancer" message="Updated LoadBalancer with new IPs: [192.168.56.110] -> [192.168.56.110]"
+Oct 04 18:02:32 wstyggS k3s[2722]: time="2025-10-04T18:02:32Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:24.815513454 +0000 UTC m=+91.517439991) (total time: 6.445691925s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease, kv.value, kv.old_value FROM kine AS kv WHERE kv.name LIKE ? AND kv.id > ? ORDER BY kv.id ASC LIMIT 500" duration=6.445691925s
+Oct 04 18:02:39 wstyggS k3s[2722]: time="2025-10-04T18:02:39Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:31.104808478 +0000 UTC m=+97.806735016) (total time: 6.548364005s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), COUNT(c.theid) FROM ( SELECT * FROM ( SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease FROM kine AS kv JOIN ( SELECT MAX(mkv.id) AS id FROM kine AS mkv WHERE mkv.name LIKE ? AND mkv.name > ? GROUP BY mkv.name) AS maxkv ON maxkv.id = kv.id WHERE kv.deleted = 0 OR ? ) AS lkv ORDER BY lkv.thename ASC ) c" duration=6.548364005s
+Oct 04 18:02:48 wstyggS k3s[2722]: time="2025-10-04T18:02:48Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:35.874196406 +0000 UTC m=+102.576122943) (total time: 11.362119903s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), COUNT(c.theid) FROM ( SELECT * FROM ( SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease FROM kine AS kv JOIN ( SELECT MAX(mkv.id) AS id FROM kine AS mkv WHERE mkv.name LIKE ? AND mkv.name > ? GROUP BY mkv.name) AS maxkv ON maxkv.id = kv.id WHERE kv.deleted = 0 OR ? ) AS lkv ORDER BY lkv.thename ASC ) c" duration=11.362119903s
 
 === Worker K3s-Agent Service Status ===
-tcsetattr: Input/output error
+● k3s-agent.service - Lightweight Kubernetes
+     Loaded: loaded (/etc/systemd/system/k3s-agent.service; enabled; vendor preset: enabled)
+     Active: activating (start) since Sat 2025-10-04 18:02:11 UTC; 38s ago
+       Docs: https://k3s.io
+    Process: 2695 ExecStartPre=/sbin/modprobe br_netfilter (code=exited, status=0/SUCCESS)
+    Process: 2696 ExecStartPre=/sbin/modprobe overlay (code=exited, status=0/SUCCESS)
+   Main PID: 2697 (k3s-agent)
+      Tasks: 7
+     Memory: 259.9M
+        CPU: 1.796s
+     CGroup: /system.slice/k3s-agent.service
+             └─2697 "/usr/local/bin/k3s agent" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" ""
+
+Oct 04 18:02:11 wstyggSW systemd[1]: Starting Lightweight Kubernetes...
+Oct 04 18:02:11 wstyggSW k3s[2697]: time="2025-10-04T18:02:11Z" level=info msg="Acquiring lock file /var/lib/rancher/k3s/data/.lock"
+Oct 04 18:02:11 wstyggSW k3s[2697]: time="2025-10-04T18:02:11Z" level=info msg="Preparing data dir /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2"
+Oct 04 18:02:23 wstyggSW k3s[2697]: time="2025-10-04T18:02:23Z" level=info msg="Starting k3s agent v1.33.5+k3s1 (fab4a5c3)"
+Oct 04 18:02:23 wstyggSW k3s[2697]: time="2025-10-04T18:02:23Z" level=info msg="Updated load balancer k3s-agent-load-balancer default server: 192.168.56.110:6443"
+Oct 04 18:02:23 wstyggSW k3s[2697]: time="2025-10-04T18:02:23Z" level=info msg="Running load balancer k3s-agent-load-balancer 127.0.0.1:6444 -> [] [default: 192.168.56.110:6443]"
+Oct 04 18:02:42 wstyggSW k3s[2697]: time="2025-10-04T18:02:42Z" level=info msg="Waiting to retrieve agent configuration; server is not ready: /var/lib/rancher/k3s/agent/serving-kubelet.crt: Post \"https://127.0.0.1:6444/v1-k3s/serving-kubelet.crt\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"
 
 === Server K3s Service Logs (last 100 lines) ===
-tcsetattr: Input/output error
+Oct 04 18:01:46 wstyggS k3s[2722]: I1004 18:01:46.792940    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik"
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.080930    2722 event.go:389] "Event occurred" object="kube-system/traefik-crd" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik-crd"
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.682611    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"klipper-cache\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-cache\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.682845    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"klipper-helm\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-helm\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.682914    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"tmp\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-tmp\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.682960    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"values\" (UniqueName: \"kubernetes.io/projected/41411bcf-5eeb-42a1-82aa-33555562da11-values\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.683002    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"klipper-config\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-config\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.683046    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"kube-api-access-b8nhk\" (UniqueName: \"kubernetes.io/projected/41411bcf-5eeb-42a1-82aa-33555562da11-kube-api-access-b8nhk\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.683087    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"content\" (UniqueName: \"kubernetes.io/configmap/41411bcf-5eeb-42a1-82aa-33555562da11-content\") pod \"41411bcf-5eeb-42a1-82aa-33555562da11\" (UID: \"41411bcf-5eeb-42a1-82aa-33555562da11\") "
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.741122    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/projected/41411bcf-5eeb-42a1-82aa-33555562da11-kube-api-access-b8nhk" (OuterVolumeSpecName: "kube-api-access-b8nhk") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "kube-api-access-b8nhk". PluginName "kubernetes.io/projected", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.743314    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/projected/41411bcf-5eeb-42a1-82aa-33555562da11-values" (OuterVolumeSpecName: "values") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "values". PluginName "kubernetes.io/projected", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.745921    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/configmap/41411bcf-5eeb-42a1-82aa-33555562da11-content" (OuterVolumeSpecName: "content") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "content". PluginName "kubernetes.io/configmap", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.746015    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-tmp" (OuterVolumeSpecName: "tmp") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "tmp". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.751064    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-cache" (OuterVolumeSpecName: "klipper-cache") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "klipper-cache". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.751173    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-config" (OuterVolumeSpecName: "klipper-config") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "klipper-config". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.753426    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-helm" (OuterVolumeSpecName: "klipper-helm") pod "41411bcf-5eeb-42a1-82aa-33555562da11" (UID: "41411bcf-5eeb-42a1-82aa-33555562da11"). InnerVolumeSpecName "klipper-helm". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791347    2722 reconciler_common.go:299] "Volume detached for volume \"kube-api-access-b8nhk\" (UniqueName: \"kubernetes.io/projected/41411bcf-5eeb-42a1-82aa-33555562da11-kube-api-access-b8nhk\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791371    2722 reconciler_common.go:299] "Volume detached for volume \"content\" (UniqueName: \"kubernetes.io/configmap/41411bcf-5eeb-42a1-82aa-33555562da11-content\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791376    2722 reconciler_common.go:299] "Volume detached for volume \"klipper-cache\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-cache\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791380    2722 reconciler_common.go:299] "Volume detached for volume \"klipper-helm\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-helm\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791384    2722 reconciler_common.go:299] "Volume detached for volume \"tmp\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-tmp\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791388    2722 reconciler_common.go:299] "Volume detached for volume \"values\" (UniqueName: \"kubernetes.io/projected/41411bcf-5eeb-42a1-82aa-33555562da11-values\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:47 wstyggS k3s[2722]: I1004 18:01:47.791391    2722 reconciler_common.go:299] "Volume detached for volume \"klipper-config\" (UniqueName: \"kubernetes.io/empty-dir/41411bcf-5eeb-42a1-82aa-33555562da11-klipper-config\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:01:48 wstyggS k3s[2722]: I1004 18:01:48.139512    2722 event.go:389] "Event occurred" object="kube-system/traefik-crd" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik-crd"
+Oct 04 18:01:48 wstyggS k3s[2722]: I1004 18:01:48.152880    2722 pod_container_deletor.go:80] "Container not found in pod's containers" containerID="d8e594d0bd9dc538376311347eb5fc8fb7004d9435c10089f2d755c9e84afd9f"
+Oct 04 18:01:48 wstyggS k3s[2722]: I1004 18:01:48.209858    2722 event.go:389] "Event occurred" object="kube-system/traefik-crd" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik-crd"
+Oct 04 18:01:58 wstyggS k3s[2722]: I1004 18:01:58.067376    2722 scope.go:117] "RemoveContainer" containerID="fed3cc839c452c75b956e8df3f9a843191a368b0525295f4fba712bcba198485"
+Oct 04 18:01:58 wstyggS k3s[2722]: E1004 18:01:58.354936    2722 handler_proxy.go:143] error resolving kube-system/metrics-server: no endpoints available for service "metrics-server"
+Oct 04 18:01:59 wstyggS k3s[2722]: I1004 18:01:59.960447    2722 handler.go:288] Adding GroupVersion metrics.k8s.io v1beta1 to ResourceManager
+Oct 04 18:02:01 wstyggS k3s[2722]: I1004 18:02:01.139548    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik"
+Oct 04 18:02:02 wstyggS k3s[2722]: I1004 18:02:02.448064    2722 cidrallocator.go:277] updated ClusterIP allocator for Service CIDR 10.43.0.0/16
+Oct 04 18:02:02 wstyggS k3s[2722]: I1004 18:02:02.505730    2722 alloc.go:328] "allocated clusterIPs" service="kube-system/traefik" clusterIPs={"IPv4":"10.43.38.79"}
+Oct 04 18:02:02 wstyggS k3s[2722]: I1004 18:02:02.626577    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="Service" apiVersion="v1" type="Normal" reason="EnsuringLoadBalancer" message="Ensuring load balancer"
+Oct 04 18:02:03 wstyggS k3s[2722]: I1004 18:02:03.151496    2722 controller.go:667] quota admission added evaluator for: daemonsets.apps
+Oct 04 18:02:03 wstyggS k3s[2722]: I1004 18:02:03.252329    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="Service" apiVersion="v1" type="Normal" reason="AppliedDaemonSet" message="Applied LoadBalancer DaemonSet kube-system/svclb-traefik-f53d626f"
+Oct 04 18:02:03 wstyggS k3s[2722]: I1004 18:02:03.452634    2722 controller.go:667] quota admission added evaluator for: controllerrevisions.apps
+Oct 04 18:02:04 wstyggS k3s[2722]: I1004 18:02:04.549406    2722 reconciler_common.go:251] "operationExecutor.VerifyControllerAttachedVolume started for volume \"tmp\" (UniqueName: \"kubernetes.io/empty-dir/6c18edeb-7c6a-49bf-80d5-e097e83070fb-tmp\") pod \"traefik-c98fdf6fb-9k2q5\" (UID: \"6c18edeb-7c6a-49bf-80d5-e097e83070fb\") " pod="kube-system/traefik-c98fdf6fb-9k2q5"
+Oct 04 18:02:04 wstyggS k3s[2722]: I1004 18:02:04.551342    2722 reconciler_common.go:251] "operationExecutor.VerifyControllerAttachedVolume started for volume \"data\" (UniqueName: \"kubernetes.io/empty-dir/6c18edeb-7c6a-49bf-80d5-e097e83070fb-data\") pod \"traefik-c98fdf6fb-9k2q5\" (UID: \"6c18edeb-7c6a-49bf-80d5-e097e83070fb\") " pod="kube-system/traefik-c98fdf6fb-9k2q5"
+Oct 04 18:02:04 wstyggS k3s[2722]: I1004 18:02:04.551361    2722 reconciler_common.go:251] "operationExecutor.VerifyControllerAttachedVolume started for volume \"kube-api-access-rn256\" (UniqueName: \"kubernetes.io/projected/6c18edeb-7c6a-49bf-80d5-e097e83070fb-kube-api-access-rn256\") pod \"traefik-c98fdf6fb-9k2q5\" (UID: \"6c18edeb-7c6a-49bf-80d5-e097e83070fb\") " pod="kube-system/traefik-c98fdf6fb-9k2q5"
+Oct 04 18:02:04 wstyggS k3s[2722]: I1004 18:02:04.832615    2722 scope.go:117] "RemoveContainer" containerID="fed3cc839c452c75b956e8df3f9a843191a368b0525295f4fba712bcba198485"
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.326912    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik"
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.605548    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"klipper-config\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-config\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.605798    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"klipper-helm\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-helm\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.605861    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"tmp\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-tmp\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.605907    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"klipper-cache\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-cache\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.605953    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"kube-api-access-fsfj4\" (UniqueName: \"kubernetes.io/projected/06e95b5c-ca0d-4254-b986-8d8921e77f14-kube-api-access-fsfj4\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.606015    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"values\" (UniqueName: \"kubernetes.io/projected/06e95b5c-ca0d-4254-b986-8d8921e77f14-values\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.606059    2722 reconciler_common.go:162] "operationExecutor.UnmountVolume started for volume \"content\" (UniqueName: \"kubernetes.io/configmap/06e95b5c-ca0d-4254-b986-8d8921e77f14-content\") pod \"06e95b5c-ca0d-4254-b986-8d8921e77f14\" (UID: \"06e95b5c-ca0d-4254-b986-8d8921e77f14\") "
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.643743    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-tmp" (OuterVolumeSpecName: "tmp") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "tmp". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.653650    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/projected/06e95b5c-ca0d-4254-b986-8d8921e77f14-kube-api-access-fsfj4" (OuterVolumeSpecName: "kube-api-access-fsfj4") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "kube-api-access-fsfj4". PluginName "kubernetes.io/projected", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.661392    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/configmap/06e95b5c-ca0d-4254-b986-8d8921e77f14-content" (OuterVolumeSpecName: "content") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "content". PluginName "kubernetes.io/configmap", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.661920    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-cache" (OuterVolumeSpecName: "klipper-cache") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "klipper-cache". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.663447    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/projected/06e95b5c-ca0d-4254-b986-8d8921e77f14-values" (OuterVolumeSpecName: "values") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "values". PluginName "kubernetes.io/projected", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.665626    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-config" (OuterVolumeSpecName: "klipper-config") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "klipper-config". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.665702    2722 operation_generator.go:781] UnmountVolume.TearDown succeeded for volume "kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-helm" (OuterVolumeSpecName: "klipper-helm") pod "06e95b5c-ca0d-4254-b986-8d8921e77f14" (UID: "06e95b5c-ca0d-4254-b986-8d8921e77f14"). InnerVolumeSpecName "klipper-helm". PluginName "kubernetes.io/empty-dir", VolumeGIDValue ""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.706726    2722 reconciler_common.go:299] "Volume detached for volume \"values\" (UniqueName: \"kubernetes.io/projected/06e95b5c-ca0d-4254-b986-8d8921e77f14-values\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.706852    2722 reconciler_common.go:299] "Volume detached for volume \"content\" (UniqueName: \"kubernetes.io/configmap/06e95b5c-ca0d-4254-b986-8d8921e77f14-content\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.706905    2722 reconciler_common.go:299] "Volume detached for volume \"klipper-config\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-config\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.706952    2722 reconciler_common.go:299] "Volume detached for volume \"klipper-helm\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-helm\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.707015    2722 reconciler_common.go:299] "Volume detached for volume \"tmp\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-tmp\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.707111    2722 reconciler_common.go:299] "Volume detached for volume \"klipper-cache\" (UniqueName: \"kubernetes.io/empty-dir/06e95b5c-ca0d-4254-b986-8d8921e77f14-klipper-cache\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.707155    2722 reconciler_common.go:299] "Volume detached for volume \"kube-api-access-fsfj4\" (UniqueName: \"kubernetes.io/projected/06e95b5c-ca0d-4254-b986-8d8921e77f14-kube-api-access-fsfj4\") on node \"wstyggs\" DevicePath \"\""
+Oct 04 18:02:06 wstyggS k3s[2722]: I1004 18:02:06.764701    2722 pod_container_deletor.go:80] "Container not found in pod's containers" containerID="ffecb7f9f1e3db2b65d4e8d94eacbf10cc8388d6669c07deb444a42f74be1a0f"
+Oct 04 18:02:07 wstyggS k3s[2722]: I1004 18:02:07.316923    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik"
+Oct 04 18:02:07 wstyggS k3s[2722]: I1004 18:02:07.352874    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="HelmChart" apiVersion="helm.cattle.io/v1" type="Normal" reason="ApplyJob" message="Applying HelmChart using Job kube-system/helm-install-traefik"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941115    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apiratelimits.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941451    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="serverstransports.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941466    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="referencegrants.gateway.networking.k8s.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941472    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apiversions.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941480    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apis.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941486    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apiportals.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941493    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apiaccesses.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941500    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="serverstransporttcps.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941511    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="httproutes.gateway.networking.k8s.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941517    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apicatalogitems.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941523    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="tlsoptions.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941531    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="ingressrouteudps.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941537    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="traefikservices.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941545    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="tlsstores.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941551    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="grpcroutes.gateway.networking.k8s.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941556    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apiplans.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941563    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="aiservices.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941568    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="ingressroutetcps.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.941574    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="ingressroutes.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.950287    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="middlewares.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.950310    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="middlewaretcps.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.950320    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="managedsubscriptions.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.950329    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="gateways.gateway.networking.k8s.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.950336    2722 resource_quota_monitor.go:227] "QuotaMonitor created object count evaluator" resource="apibundles.hub.traefik.io"
+Oct 04 18:02:10 wstyggS k3s[2722]: I1004 18:02:10.961009    2722 shared_informer.go:350] "Waiting for caches to sync" controller="resource quota"
+Oct 04 18:02:14 wstyggS k3s[2722]: I1004 18:02:14.599451    2722 shared_informer.go:350] "Waiting for caches to sync" controller="garbage collector"
+Oct 04 18:02:18 wstyggS k3s[2722]: I1004 18:02:18.922146    2722 shared_informer.go:357] "Caches are synced" controller="resource quota"
+Oct 04 18:02:19 wstyggS k3s[2722]: I1004 18:02:19.100411    2722 shared_informer.go:357] "Caches are synced" controller="garbage collector"
+Oct 04 18:02:21 wstyggS k3s[2722]: I1004 18:02:21.928863    2722 pod_startup_latency_tracker.go:104] "Observed pod startup duration" pod="kube-system/svclb-traefik-f53d626f-k6cr2" podStartSLOduration=13.425151357 podStartE2EDuration="18.92418818s" podCreationTimestamp="2025-10-04 18:02:03 +0000 UTC" firstStartedPulling="2025-10-04 18:02:06.331480877 +0000 UTC m=+73.033407415" lastFinishedPulling="2025-10-04 18:02:11.8305177 +0000 UTC m=+78.532444238" observedRunningTime="2025-10-04 18:02:21.921694383 +0000 UTC m=+88.623620922" watchObservedRunningTime="2025-10-04 18:02:21.92418818 +0000 UTC m=+88.626114719"
+Oct 04 18:02:22 wstyggS k3s[2722]: I1004 18:02:22.248266    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="Service" apiVersion="v1" type="Normal" reason="UpdatedLoadBalancer" message="Updated LoadBalancer with new IPs: [] -> [192.168.56.110]"
+Oct 04 18:02:22 wstyggS k3s[2722]: I1004 18:02:22.878961    2722 event.go:389] "Event occurred" object="kube-system/traefik" fieldPath="" kind="Service" apiVersion="v1" type="Normal" reason="UpdatedLoadBalancer" message="Updated LoadBalancer with new IPs: [192.168.56.110] -> [192.168.56.110]"
+Oct 04 18:02:32 wstyggS k3s[2722]: time="2025-10-04T18:02:32Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:24.815513454 +0000 UTC m=+91.517439991) (total time: 6.445691925s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease, kv.value, kv.old_value FROM kine AS kv WHERE kv.name LIKE ? AND kv.id > ? ORDER BY kv.id ASC LIMIT 500" duration=6.445691925s
+Oct 04 18:02:39 wstyggS k3s[2722]: time="2025-10-04T18:02:39Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:31.104808478 +0000 UTC m=+97.806735016) (total time: 6.548364005s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), COUNT(c.theid) FROM ( SELECT * FROM ( SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease FROM kine AS kv JOIN ( SELECT MAX(mkv.id) AS id FROM kine AS mkv WHERE mkv.name LIKE ? AND mkv.name > ? GROUP BY mkv.name) AS maxkv ON maxkv.id = kv.id WHERE kv.deleted = 0 OR ? ) AS lkv ORDER BY lkv.thename ASC ) c" duration=6.548364005s
+Oct 04 18:02:48 wstyggS k3s[2722]: time="2025-10-04T18:02:48Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:35.874196406 +0000 UTC m=+102.576122943) (total time: 11.362119903s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), COUNT(c.theid) FROM ( SELECT * FROM ( SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease FROM kine AS kv JOIN ( SELECT MAX(mkv.id) AS id FROM kine AS mkv WHERE mkv.name LIKE ? AND mkv.name > ? GROUP BY mkv.name) AS maxkv ON maxkv.id = kv.id WHERE kv.deleted = 0 OR ? ) AS lkv ORDER BY lkv.thename ASC ) c" duration=11.362119903s
+Oct 04 18:02:50 wstyggS k3s[2722]: time="2025-10-04T18:02:48Z" level=warning msg="Slow SQL (started: 2025-10-04 18:02:32.721720628 +0000 UTC m=+99.423647165) (total time: 12.912704508s):  SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), COUNT(c.theid) FROM ( SELECT * FROM ( SELECT ( SELECT MAX(rkv.id) AS id FROM kine AS rkv), ( SELECT MAX(crkv.prev_revision) AS prev_revision FROM kine AS crkv WHERE crkv.name = 'compact_rev_key'), kv.id AS theid, kv.name AS thename, kv.created, kv.deleted, kv.create_revision, kv.prev_revision, kv.lease FROM kine AS kv JOIN ( SELECT MAX(mkv.id) AS id FROM kine AS mkv WHERE mkv.name LIKE ? AND mkv.name > ? GROUP BY mkv.name) AS maxkv ON maxkv.id = kv.id WHERE kv.deleted = 0 OR ? ) AS lkv ORDER BY lkv.thename ASC ) c" duration=12.912704508s
 
 === Worker K3s-Agent Logs (last 100 lines) ===
-tcsetattr: Input/output error
+Oct 04 18:02:11 wstyggSW systemd[1]: Starting Lightweight Kubernetes...
+Oct 04 18:02:11 wstyggSW k3s[2697]: time="2025-10-04T18:02:11Z" level=info msg="Acquiring lock file /var/lib/rancher/k3s/data/.lock"
+Oct 04 18:02:11 wstyggSW k3s[2697]: time="2025-10-04T18:02:11Z" level=info msg="Preparing data dir /var/lib/rancher/k3s/data/86a616cdaf0fb57fa13670ac5a16f1699f4b2be4772e842d97904c69698ffdc2"
+Oct 04 18:02:23 wstyggSW k3s[2697]: time="2025-10-04T18:02:23Z" level=info msg="Starting k3s agent v1.33.5+k3s1 (fab4a5c3)"
+Oct 04 18:02:23 wstyggSW k3s[2697]: time="2025-10-04T18:02:23Z" level=info msg="Updated load balancer k3s-agent-load-balancer default server: 192.168.56.110:6443"
+Oct 04 18:02:23 wstyggSW k3s[2697]: time="2025-10-04T18:02:23Z" level=info msg="Running load balancer k3s-agent-load-balancer 127.0.0.1:6444 -> [] [default: 192.168.56.110:6443]"
+Oct 04 18:02:42 wstyggSW k3s[2697]: time="2025-10-04T18:02:42Z" level=info msg="Waiting to retrieve agent configuration; server is not ready: /var/lib/rancher/k3s/agent/serving-kubelet.crt: Post \"https://127.0.0.1:6444/v1-k3s/serving-kubelet.crt\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"
 
 === Network Connectivity: Ping Server from Worker ===
-tcsetattr: Input/output error
+PING 192.168.56.110 (192.168.56.110) 56(84) bytes of data.
+64 bytes from 192.168.56.110: icmp_seq=1 ttl=64 time=0.194 ms
+64 bytes from 192.168.56.110: icmp_seq=2 ttl=64 time=0.282 ms
+64 bytes from 192.168.56.110: icmp_seq=3 ttl=64 time=0.268 ms
+
+--- 192.168.56.110 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2026ms
+rtt min/avg/max/mdev = 0.194/0.248/0.282/0.038 ms
 
 === K3s API Connectivity from Worker ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0100     4  pong  0     4    0     0      0      0 --:--:--  0:00:05 --:--:--     1
 
 === Shared Folder Contents ===
 total 15K
--rw------- 1 wstygg 2019_paris  109 Oct  4 19:51 k3s_token
--rw------- 1 wstygg 2019_paris 2.9K Oct  4 19:51 kubeconfig.yaml
+-rw------- 1 wstygg 2019_paris  109 Oct  4 20:01 k3s_token
+-rw------- 1 wstygg 2019_paris 2.9K Oct  4 20:01 kubeconfig.yaml
 
 === Token File (first 20 chars) ===
-K1028b62e979d0aeed75
+K10f3c7b0511519af791
 
 === Cluster Nodes ===
 
