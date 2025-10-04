@@ -45,28 +45,28 @@ doctor:
 	@vagrant status | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Server (wstyggS) Network Interfaces ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggS -c "ip a" 2>&1 | tee -a diagnosis.log || echo "⚠️  Timeout or connection failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggS -- ip a 2>&1 | tee -a diagnosis.log || echo "⚠️  Timeout or connection failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Worker (wstyggSW) Network Interfaces ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggSW -c "ip a" 2>&1 | tee -a diagnosis.log || echo "⚠️  Timeout or connection failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggSW -- ip a 2>&1 | tee -a diagnosis.log || echo "⚠️  Timeout or connection failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Server K3s Service Status ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggS -c "sudo systemctl status k3s --no-pager -l" 2>&1 | tee -a diagnosis.log || echo "⚠️  Service check failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggS -- sudo systemctl status k3s --no-pager -l 2>&1 | tee -a diagnosis.log || echo "⚠️  Service check failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Worker K3s-Agent Service Status ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggSW -c "sudo systemctl status k3s-agent --no-pager -l" 2>&1 | tee -a diagnosis.log || echo "⚠️  Service check failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggSW -- sudo systemctl status k3s-agent --no-pager -l 2>&1 | tee -a diagnosis.log || echo "⚠️  Service check failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Server K3s Service Logs (last 100 lines) ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggS -c "sudo journalctl -u k3s --no-pager -n 100" 2>&1 | tee -a diagnosis.log || echo "⚠️  Log retrieval failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggS -- sudo journalctl -u k3s --no-pager -n 100 2>&1 | tee -a diagnosis.log || echo "⚠️  Log retrieval failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Worker K3s-Agent Logs (last 100 lines) ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggSW -c "sudo journalctl -u k3s-agent --no-pager -n 100" 2>&1 | tee -a diagnosis.log || echo "⚠️  Log retrieval failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggSW -- sudo journalctl -u k3s-agent --no-pager -n 100 2>&1 | tee -a diagnosis.log || echo "⚠️  Log retrieval failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Network Connectivity: Ping Server from Worker ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggSW -c "ping -c 3 192.168.56.110" 2>&1 | tee -a diagnosis.log || echo "⚠️  Ping failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggSW -- ping -c 3 192.168.56.110 2>&1 | tee -a diagnosis.log || echo "⚠️  Ping failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== K3s API Connectivity from Worker ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggSW -c "curl -k https://192.168.56.110:6443/ping 2>&1" | tee -a diagnosis.log || echo "⚠️  API unreachable" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggSW -- curl -k https://192.168.56.110:6443/ping 2>&1 | tee -a diagnosis.log || echo "⚠️  API unreachable" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Shared Folder Contents ===" | tee -a diagnosis.log
 	@ls -lh shared/ 2>&1 | tee -a diagnosis.log || echo "⚠️  Shared folder not accessible" | tee -a diagnosis.log
@@ -76,19 +76,19 @@ doctor:
 	@echo "" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Cluster Nodes ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggS -c "sudo kubectl get nodes -o wide" 2>&1 | tee -a diagnosis.log || echo "⚠️  kubectl get nodes failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggS -- sudo kubectl get nodes -o wide 2>&1 | tee -a diagnosis.log || echo "⚠️  kubectl get nodes failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== Cluster Pods (all namespaces) ===" | tee -a diagnosis.log
-	@timeout 10 vagrant ssh wstyggS -c "sudo kubectl get pods -A" 2>&1 | tee -a diagnosis.log || echo "⚠️  kubectl get pods failed" | tee -a diagnosis.log
+	@timeout 10 vagrant ssh wstyggS -- sudo kubectl get pods -A 2>&1 | tee -a diagnosis.log || echo "⚠️  kubectl get pods failed" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "=== 📋 Diagnostic Summary ===" | tee -a diagnosis.log
 	@echo "Server K3s Service:" | tee -a diagnosis.log
-	@timeout 5 vagrant ssh wstyggS -c "sudo systemctl is-active k3s" 2>&1 | grep -q active && echo "  ✅ Active" | tee -a diagnosis.log || echo "  ❌ Inactive/Failed" | tee -a diagnosis.log
+	@timeout 5 vagrant ssh wstyggS -- sudo systemctl is-active k3s 2>&1 | grep -q active && echo "  ✅ Active" | tee -a diagnosis.log || echo "  ❌ Inactive/Failed" | tee -a diagnosis.log
 	@echo "Worker K3s-Agent Service:" | tee -a diagnosis.log
-	@timeout 5 vagrant ssh wstyggSW -c "sudo systemctl is-active k3s-agent" 2>&1 | grep -q active && echo "  ✅ Active" | tee -a diagnosis.log || echo "  ❌ Inactive/Failed" | tee -a diagnosis.log
+	@timeout 5 vagrant ssh wstyggSW -- sudo systemctl is-active k3s-agent 2>&1 | grep -q active && echo "  ✅ Active" | tee -a diagnosis.log || echo "  ❌ Inactive/Failed" | tee -a diagnosis.log
 	@echo "Cluster Status:" | tee -a diagnosis.log
-	@timeout 5 vagrant ssh wstyggS -c "sudo kubectl get nodes 2>/dev/null | grep -c Ready" 2>&1 | grep -q "2" && echo "  ✅ Both nodes Ready" | tee -a diagnosis.log || echo "  ⚠️  Nodes not Ready" | tee -a diagnosis.log
+	@timeout 5 vagrant ssh wstyggS -- "sudo kubectl get nodes 2>/dev/null | grep -c Ready" 2>&1 | grep -q "2" && echo "  ✅ Both nodes Ready" | tee -a diagnosis.log || echo "  ⚠️  Nodes not Ready" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
 	@echo "📄 Full diagnostic log saved to: diagnosis.log" | tee -a diagnosis.log
 	@echo "" | tee -a diagnosis.log
