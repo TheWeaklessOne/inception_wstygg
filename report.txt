@@ -1,15 +1,0 @@
-Bringing machine 'wstyggS' up with 'virtualbox' provider...
-Bringing machine 'wstyggSW' up with 'virtualbox' provider...
-==> wstyggS: Importing base box 'bento/ubuntu-22.04'...
-[KProgress: 10%[KProgress: 20%[KProgress: 40%[KProgress: 90%There was an error while executing `VBoxManage`, a CLI used by Vagrant
-for controlling VirtualBox. The command and stderr is shown below.
-
-Command: ["import", "/home/wstygg/.vagrant.d/boxes/bento-VAGRANTSLASH-ubuntu-22.04/202407.23.0/amd64/virtualbox/box.ovf", "--vsys", "0", "--vmname", "ubuntu-22.04-amd64_1759586095855_12334", "--vsys", "0", "--unit", "11", "--disk", "/home/wstygg/VirtualBox VMs/ubuntu-22.04-amd64_1759586095855_12334/ubuntu-22.04-amd64-disk001.vmdk"]
-
-Stderr: 0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
-Interpreting /home/wstygg/.vagrant.d/boxes/bento-VAGRANTSLASH-ubuntu-22.04/202407.23.0/amd64/virtualbox/box.ovf...
-OK.
-0%...10%...20%...30%...40%...NS_ERROR_INVALID_ARG
-VBoxManage: error: Appliance import failed
-VBoxManage: error: Code NS_ERROR_INVALID_ARG (0x80070057) - Invalid argument value (extended info not available)
-VBoxManage: error: Context: "RTEXITCODE handleImportAppliance(HandlerArg*)" at line 1440 of file VBoxManageAppliance.cpp
