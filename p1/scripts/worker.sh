@@ -48,31 +48,40 @@ if ! curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; 
 fi
 
 echo "Installing K3s agent on ${NODE_NAME} (${NODE_IP}), joining https://${SERVER_IP}:6443 ..."
-# Avoid installer blocking on systemd start; start the service ourselves after install
+echo "[INFO] This may take a few minutes as the agent retrieves configuration from server..."
+
+# Let the installer start the service, but give it time
+# The agent needs to connect to the server which may still be under load
 curl -sfL https://get.k3s.io | \
-  INSTALL_K3S_SKIP_START=true \
   K3S_URL="https://${SERVER_IP}:6443" \
   K3S_TOKEN_FILE="$TOKEN_PATH" \
   sh -s - agent \
     --node-name "$NODE_NAME" \
     --node-ip "$NODE_IP"
 
-systemctl enable k3s-agent >/dev/null 2>&1 || true
-systemctl start k3s-agent >/dev/null 2>&1 || true
+echo "[INFO] K3s agent installation completed"
+echo "[INFO] Waiting for agent service to become active..."
 
-echo "[INFO] Waiting for K3s agent to start..."
-for i in $(seq 1 180); do
+# Give some time for the service to start
+for i in $(seq 1 60); do
   if systemctl is-active --quiet k3s-agent; then
     echo "[OK] K3s agent is active (took ${i}s)"
     exit 0
   fi
   echo -n "."
-  sleep 1
+  sleep 2
 done
 
 echo ""
 if systemctl is-active --quiet k3s-agent; then
   echo "[OK] K3s agent is active"
+  exit 0
 else
-  echo "[WARN] K3s agent may still be starting. Check: sudo systemctl status k3s-agent"
+  echo "[WARN] K3s agent may still be starting after install. This is normal on minimal resources."
+  echo "[INFO] Service status:"
+  systemctl status k3s-agent --no-pager || true
+  echo ""
+  echo "[INFO] The agent will continue attempting to join the cluster in the background."
+  echo "[INFO] Run 'vagrant ssh wstyggSW -c \"sudo systemctl status k3s-agent\"' to check status."
+  exit 0
 fi
