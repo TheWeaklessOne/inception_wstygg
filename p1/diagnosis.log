@@ -1,0 +1,57 @@
+
+=== Vagrant VM Status ===
+Current machine states:
+
+wstyggS                   running (virtualbox)
+wstyggSW                  running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+
+=== Server (wstyggS) Network Interfaces ===
+tcsetattr: Input/output error
+
+=== Worker (wstyggSW) Network Interfaces ===
+tcsetattr: Input/output error
+
+=== Server K3s Service Status ===
+tcsetattr: Input/output error
+
+=== Worker K3s-Agent Service Status ===
+tcsetattr: Input/output error
+
+=== Server K3s Service Logs (last 100 lines) ===
+tcsetattr: Input/output error
+
+=== Worker K3s-Agent Logs (last 100 lines) ===
+tcsetattr: Input/output error
+
+=== Network Connectivity: Ping Server from Worker ===
+tcsetattr: Input/output error
+
+=== K3s API Connectivity from Worker ===
+
+=== Shared Folder Contents ===
+total 15K
+-rw------- 1 wstygg 2019_paris  109 Oct  4 19:51 k3s_token
+-rw------- 1 wstygg 2019_paris 2.9K Oct  4 19:51 kubeconfig.yaml
+
+=== Token File (first 20 chars) ===
+K1028b62e979d0aeed75
+
+=== Cluster Nodes ===
+
+=== Cluster Pods (all namespaces) ===
+
+
+=== 📋 Diagnostic Summary ===
+Server K3s Service:
+  ❌ Inactive/Failed
+Worker K3s-Agent Service:
+  ❌ Inactive/Failed
+Cluster Status:
+  ⚠️  Nodes not Ready
+
+📄 Full diagnostic log saved to: diagnosis.log
+
