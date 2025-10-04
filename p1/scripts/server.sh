@@ -12,9 +12,11 @@ TOKEN_DST="$SHARED_DIR/k3s_token"
 
 mkdir -p "$SHARED_DIR"
 
+echo "[INFO] Updating package list..."
 export DEBIAN_FRONTEND=noninteractive
-apt-get update -y
-apt-get install -y curl
+apt-get update -qq > /dev/null 2>&1
+echo "[INFO] Installing dependencies..."
+apt-get install -y -qq curl > /dev/null 2>&1
 
 if systemctl is-active --quiet k3s; then
   echo "K3s server already installed; ensuring artifacts are exported..."
