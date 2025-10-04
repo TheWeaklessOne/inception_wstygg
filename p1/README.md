@@ -27,6 +27,7 @@ K3s is installed on both (server + agent), and a kubeconfig is exported to the h
 ```bash
 make          # Start cluster (vagrant up)
 make check    # Verify cluster (run after 'make')
+make doctor   # Comprehensive diagnostics (logs saved to diagnosis.log)
 make clean    # Destroy VMs and remove artifacts
 make re       # Clean and rebuild
 ```
@@ -84,6 +85,22 @@ vagrant provision  # Should succeed without errors
 ## Troubleshooting
 
 If you encounter issues:
+
+### Quick Diagnostics (Recommended)
+
+```bash
+# Run comprehensive diagnostics (saves full report to diagnosis.log)
+make doctor
+```
+
+This will collect:
+- VM status and network configuration
+- K3s/K3s-agent service status and logs
+- Network connectivity tests (ping, API access)
+- Cluster node and pod status
+- Shared folder contents verification
+
+### Manual Troubleshooting
 
 ```bash
 # Check K3s services status
