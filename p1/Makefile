@@ -11,10 +11,6 @@ clean:
 re: clean all
 
 check:
-	@echo "=============================================="
-	@echo "  Part 1 Verification (Subject Compliance)"
-	@echo "=============================================="
-	@echo ""
 	@echo "[1/6] Checking VM status..."
 	@vagrant status | grep -E "(wstyggS|wstyggSW)" || (echo "❌ VMs not running. Run 'make' first." && exit 1)
 	@echo "✅ VMs are up"
@@ -40,8 +36,3 @@ check:
 	@[ -f shared/kubeconfig.yaml ] && echo "✅ kubeconfig.yaml exists" || (echo "❌ kubeconfig.yaml not found" && exit 1)
 	@export KUBECONFIG=$$(pwd)/shared/kubeconfig.yaml && kubectl get nodes >/dev/null 2>&1 && echo "✅ kubectl from host works" || echo "⚠️  kubectl not configured (install kubectl or wait for cluster)"
 	@echo ""
-	@echo "=============================================="
-	@echo "  ✅ Part 1 verification complete!"
-	@echo "=============================================="
-	@echo ""
-	@echo "For detailed checks, see: VERIFICATION.md"

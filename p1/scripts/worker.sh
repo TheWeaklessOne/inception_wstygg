@@ -41,4 +41,20 @@ curl -sfL https://get.k3s.io | \
     --node-ip "$NODE_IP"
 
 systemctl enable k3s-agent >/dev/null 2>&1 || true
-systemctl is-active --quiet k3s-agent && echo "K3s agent is active."
+
+echo "[INFO] Waiting for K3s agent to start..."
+for i in $(seq 1 30); do
+  if systemctl is-active --quiet k3s-agent; then
+    echo "[OK] K3s agent is active (took ${i}s)"
+    exit 0
+  fi
+  echo -n "."
+  sleep 1
+done
+
+echo ""
+if systemctl is-active --quiet k3s-agent; then
+  echo "[OK] K3s agent is active"
+else
+  echo "[WARN] K3s agent may still be starting. Check: sudo systemctl status k3s-agent"
+fi

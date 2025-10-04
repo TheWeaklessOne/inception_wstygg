@@ -63,4 +63,20 @@ else
 fi
 
 systemctl enable k3s >/dev/null 2>&1 || true
-systemctl is-active --quiet k3s && echo "K3s server is active."
+
+echo "[INFO] Waiting for K3s server to be ready..."
+for i in $(seq 1 30); do
+  if systemctl is-active --quiet k3s; then
+    echo "[OK] K3s server is active (took ${i}s)"
+    exit 0
+  fi
+  echo -n "."
+  sleep 1
+done
+
+echo ""
+if systemctl is-active --quiet k3s; then
+  echo "[OK] K3s server is active"
+else
+  echo "[WARN] K3s server may still be starting. Check: sudo systemctl status k3s"
+fi
