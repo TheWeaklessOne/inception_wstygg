@@ -26,6 +26,7 @@ K3s is installed on both (server + agent), and a kubeconfig is exported to the h
 ### With Makefile (recommended)
 ```bash
 make          # Start cluster (vagrant up)
+make check    # Verify cluster (run after 'make')
 make clean    # Destroy VMs and remove artifacts
 make re       # Clean and rebuild
 ```

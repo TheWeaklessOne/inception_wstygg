@@ -44,6 +44,7 @@ See [p1/README.md](p1/README.md) for detailed Part 1 documentation.
 
 Inside `p1/` directory:
 - `make` or `make all` - Start cluster (vagrant up)
+- `make check` - Verify cluster is correctly configured
 - `make clean` - Destroy VMs and remove artifacts
 - `make re` - Clean and rebuild (clean + all)
 
