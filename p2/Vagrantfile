@@ -1,0 +1,48 @@
+# Force Vagrant to use local directories (no sudo, limited disk quota)
+ENV['VAGRANT_HOME'] = File.expand_path('./.vagrant.d', __dir__)
+
+# VM Resource Configuration
+# Subject requirement: 1 CPU, 512-1024 MB RAM per machine
+VM_MEMORY = "1024"  # RAM in MB (subject allows 512-1024)
+VM_CPUS = 1         # Number of CPUs (subject requirement)
+
+# Local directory for VirtualBox VM storage (avoid using global default)
+VM_DATA_DIR = File.expand_path('./vm-data', __dir__)
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_check_update = false
+  
+  # Disable default /vagrant sync to avoid conflicts
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  # K3s Server VM (single node for Part 2)
+  config.vm.define "wstyggS" do |node|
+    node.vm.hostname = "wstyggS"
+    node.vm.network "private_network", ip: "192.168.56.110"
+    
+    # Shared folder for kubeconfig export
+    node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
+
+    node.vm.provider "virtualbox" do |vb|
+      vb.customize ["setproperty", "machinefolder", VM_DATA_DIR]
+      vb.memory = VM_MEMORY
+      vb.cpus = VM_CPUS
+      vb.name = "p2_wstyggS"
+    end
+
+    # First provisioner: Install and configure K3s server
+    node.vm.provision "shell",
+      path: "scripts/server.sh",
+      privileged: true,
+      env: {
+        "SERVER_IP" => "192.168.56.110",
+        "NODE_NAME" => "wstyggS"
+      }
+
+    # Second provisioner: Deploy applications (runs after K3s is ready)
+    node.vm.provision "shell",
+      path: "scripts/bootstrap_apps.sh",
+      privileged: true
+  end
+end
