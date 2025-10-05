@@ -34,25 +34,38 @@ Target environment: Ubuntu Linux (x86_64) host without sudo/root. VirtualBox 7.x
 ## Part 2 - K3s Single Node with Ingress
 
 ### Goals
-- Single VM (`wstyggS`) running K3s server, hosting three applications behind an Ingress with host-based routing.
-- App 2 must always have exact replica count of 3.
+- Provision a single K3s VM (`wstyggS`) that serves three HTTP apps via Traefik Ingress using host headers.
+- Guarantee the second app always runs exactly three replicas.
+- Export kubeconfig for host-side verification and supply a smoke test to demo routing.
 
 ### Steps
-1. **Structure**: `p2/` mirrors layout (`Vagrantfile`, `scripts/`, `confs/`, `k8s/`).
-2. **Provisioning**: reuse Part 1 scripts (symlink or shared copies) to install K3s server.
-3. **Manifests** (store under `p2/k8s/`):
+1. **Directory layout**: scaffold `p2/` with:
+   - `Vagrantfile`
+   - `scripts/` (`server.sh`, `bootstrap_apps.sh`, `smoke.sh`)
+   - `manifests/` (single `apps.yaml` bundling namespace, ConfigMaps, Deployments, Services, Ingress)
+   - `shared/` (empty, tracked via `.gitignore` pattern)
+2. **Vagrantfile**:
+   - Base on `ubuntu/jammy64`, 1 vCPU / 1024 MB RAM, machine name/IP `wstyggS` → `192.168.56.110`.
+   - Mount `./shared` to `/vagrant_shared` for kubeconfig export.
+   - First shell provisioner runs `scripts/server.sh`; second runs `scripts/bootstrap_apps.sh` so manifests apply only after the control plane is ready.
+3. **`scripts/server.sh`**:
+   - Implement a self-contained installer for Part 2: update apt cache, install prerequisites, run K3s with proper SAN/node-ip, wait for `/readyz`, and export kubeconfig into `/vagrant_shared/` with mode `600`. (Поскольку части оцениваются отдельно, не полагаемся на скрипты из `p1`.)
+   - Keep output concise; exit non-zero if readiness probes fail.
+4. **`scripts/bootstrap_apps.sh`**:
+   - Wait until `kubectl get nodes` reports the single node `Ready`.
+   - Apply `/vagrant/manifests/apps.yaml`; reapply safely on subsequent provisions (idempotent).
+   - Optionally wait for the three deployments to report available replicas (`kubectl rollout status`).
+5. **Kubernetes manifests (`manifests/apps.yaml`)**:
    - Namespace `webapps`.
-   - Deployments/Services for App 1/2/3 using lightweight images.
-   - Ingress with rules for hosts `app1.com`, `app2.com`, default backend to App 3.
-4. **Testing**: add `p2/scripts/smoke.sh` to run:
-   ```sh
-   kubectl get pods -n webapps
-   curl -H 'Host: app1.com' http://192.168.56.110
-   curl -H 'Host: app2.com' http://192.168.56.110
-   curl -H 'Host: any.other' http://192.168.56.110
-   ```
-   Expect App 2 deployment to show `READY 3/3` and HTTP responses to match.
-5. **Docs**: describe how to apply manifests (`kubectl apply -f k8s/`), run smoke test, and clean up (`vagrant destroy`).
+   - Three ConfigMaps holding minimal HTML snippets for `app1`, `app2`, `app3`.
+   - Deployments mounting the ConfigMaps; set `replicas: 3` only for app 2.
+   - ClusterIP Services and a Traefik Ingress with exact host rules (`app1.com`, `app2.com`, wildcard/default to app3) plus fallback rule for any host.
+6. **Validation helpers**:
+   - `scripts/smoke.sh` (run via `vagrant ssh wstyggS -c`) to print pod status and execute the required curl host-header tests.
+   - Host instructions to run `kubectl --kubeconfig=p2/shared/kubeconfig.yaml get pods -n webapps`.
+7. **Documentation**: update `p2/README.md`
+8. **Automation**: author a lightweight `Makefile` in `p2/` with targets `all` (alias for `vagrant up`), `re` (`destroy` then `up`), and `check` (run smoke script + host-side `kubectl` check).
+ with macOS-development note, `vagrant up` usage, smoke test, and cleanup steps (`vagrant destroy -f`).
 
 ## Part 3 - K3d & Argo CD (Without Vagrant)
 
