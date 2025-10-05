@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# Sample project (reference only, not part of submission)
+.agents/sample_project/
+
 # Vagrant
 .vagrant/
 .vagrant.d/
