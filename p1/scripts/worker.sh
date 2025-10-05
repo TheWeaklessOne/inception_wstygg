@@ -61,14 +61,21 @@ curl -sfL https://get.k3s.io | \
 
 echo "[INFO] K3s agent installation completed"
 echo "[INFO] Waiting for agent service to become active..."
+echo "[INFO] This can take 3-5 minutes on minimal resources..."
 
-# Give some time for the service to start
-for i in $(seq 1 60); do
+# Give more time for the service to start on minimal resources
+for i in $(seq 1 180); do
   if systemctl is-active --quiet k3s-agent; then
-    echo "[OK] K3s agent is active (took ${i}s)"
+    echo "[OK] K3s agent is active (took $((i*2))s)"
     exit 0
   fi
-  echo -n "."
+  # Progress indicator every 30 seconds
+  if [ $((i % 15)) -eq 0 ]; then
+    echo ""
+    echo "[INFO] Still waiting for agent to start... ($((i*2))s elapsed)"
+  else
+    echo -n "."
+  fi
   sleep 2
 done
 

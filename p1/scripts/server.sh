@@ -34,7 +34,7 @@ fi
 systemctl enable k3s >/dev/null 2>&1 || true
 
 echo "[INFO] Waiting for K3s server service to be active..."
-for i in $(seq 1 30); do
+for i in $(seq 1 60); do
   if systemctl is-active --quiet k3s; then
     echo "[OK] K3s server is active (took ${i}s)"
     break
