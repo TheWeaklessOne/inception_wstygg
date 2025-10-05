@@ -7,8 +7,8 @@ ENV['VAGRANT_HOME'] = File.expand_path('./.vagrant.d', __dir__)
 VM_MEMORY = "1024"  # RAM in MB (subject: 512 or 1024)
 VM_CPUS = 1         # Number of CPUs (subject: 1)
 
-# Local directory for VirtualBox VM storage (avoid using global default)
-VM_DATA_DIR = File.expand_path('./vm-data', __dir__)
+# Shared VM storage directory at project root (for all parts)
+VM_DATA_DIR = File.expand_path('../vm-data', __dir__)
 
 Vagrant.configure("2") do |config|
   BOX = "ubuntu/jammy64"

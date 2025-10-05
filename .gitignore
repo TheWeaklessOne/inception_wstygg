@@ -4,6 +4,9 @@
 # Sample project (reference only, not part of submission)
 .agents/sample_project/
 
+# Shared VM storage for all parts (p1, p2, p3, etc.)
+vm-data/
+
 # Vagrant
 .vagrant/
 .vagrant.d/
