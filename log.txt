@@ -1,18 +1,0 @@
-vagrant up
-Bringing machine 'wstyggS' up with 'virtualbox' provider...
-Bringing machine 'wstyggSW' up with 'virtualbox' provider...
-==> wstyggS: Importing base box 'ubuntu/jammy64'...
-[KProgress: 90%There was an error while executing `VBoxManage`, a CLI used by Vagrant
-for controlling VirtualBox. The command and stderr is shown below.
-
-Command: ["import", "/home/wstygg/.vagrant.d/boxes/ubuntu-VAGRANTSLASH-jammy64/20241002.0.0/virtualbox/box.ovf", "--vsys", "0", "--vmname", "ubuntu-jammy-22.04-cloudimg-20251001_1759656517453_41307", "--vsys", "0", "--unit", "13", "--disk", "/home/sbednar/iot/vb/ubuntu-jammy-22.04-cloudimg-20251001_1759656517453_41307/ubuntu-jammy-22.04-cloudimg.vmdk", "--vsys", "0", "--unit", "14", "--disk", "/home/sbednar/iot/vb/ubuntu-jammy-22.04-cloudimg-20251001_1759656517453_41307/ubuntu-jammy-22.04-cloudimg-configdrive.vmdk"]
-
-Stderr: 0%...10%...20%...30%...40%...50%...60%...70%...80%...90%...100%
-Interpreting /home/wstygg/.vagrant.d/boxes/ubuntu-VAGRANTSLASH-jammy64/20241002.0.0/virtualbox/box.ovf...
-OK.
-0%...NS_ERROR_FAILURE
-VBoxManage: error: Appliance import failed
-VBoxManage: error: Could not create a directory '/home/sbednar/iot/vb/ubuntu-jammy-22.04-cloudimg-20251001_1759656517453_41307' to save the settings file (VERR_ACCESS_DENIED)
-VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005), component MachineWrap, interface IMachine
-VBoxManage: error: Context: "RTEXITCODE handleImportAppliance(HandlerArg*)" at line 1440 of file VBoxManageAppliance.cpp
-make: *** [Makefile:4: all] Error 1

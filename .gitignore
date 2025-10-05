@@ -1,8 +1,7 @@
 # macOS
 .DS_Store
 
-# Sample project (reference only, not part of submission)
-.agents/sample_project/
+.agents/
 
 # Shared VM storage for all parts (p1, p2, p3, etc.)
 vm-data/
