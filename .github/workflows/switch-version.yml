@@ -1,0 +1,45 @@
+name: Switch Application Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Application version to deploy'
+        required: true
+        type: choice
+        options:
+          - v1
+          - v2
+
+jobs:
+  switch-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Update deployment version
+        run: |
+          echo "Switching to version ${{ inputs.version }}"
+          sed -i "s|image: wil42/playground:.*|image: wil42/playground:${{ inputs.version }}|" deployment.yaml
+          
+      - name: Show changes
+        run: |
+          echo "=== Updated deployment.yaml ==="
+          cat deployment.yaml | grep "image:"
+          
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add deployment.yaml
+          git commit -m "🚀 Switch to ${{ inputs.version }}" || echo "No changes to commit"
+          git push
+          
+      - name: Success message
+        run: |
+          echo "✅ Successfully switched to ${{ inputs.version }}"
+          echo "🔄 Argo CD will sync the changes within 3 minutes"
