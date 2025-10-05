@@ -7,6 +7,9 @@ ENV['VAGRANT_HOME'] = File.expand_path('./.vagrant.d', __dir__)
 VM_MEMORY = "1024"  # RAM in MB (subject: 512 or 1024)
 VM_CPUS = 1         # Number of CPUs (subject: 1)
 
+# Local directory for VirtualBox VM storage (avoid using global default)
+VM_DATA_DIR = File.expand_path('./vm-data', __dir__)
+
 Vagrant.configure("2") do |config|
   BOX = "ubuntu/jammy64"
 
@@ -21,8 +24,10 @@ Vagrant.configure("2") do |config|
     node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
 
     node.vm.provider "virtualbox" do |vb|
+      vb.customize ["setproperty", "machinefolder", VM_DATA_DIR]
       vb.memory = VM_MEMORY
       vb.cpus = VM_CPUS
+      vb.name = "p1_wstyggS"
     end
 
     node.vm.provision "shell",
@@ -41,8 +46,10 @@ Vagrant.configure("2") do |config|
     node.vm.synced_folder "./shared", "/vagrant_shared", create: true, owner: "vagrant", group: "vagrant"
 
     node.vm.provider "virtualbox" do |vb|
+      vb.customize ["setproperty", "machinefolder", VM_DATA_DIR]
       vb.memory = VM_MEMORY
       vb.cpus = VM_CPUS
+      vb.name = "p1_wstyggSW"
     end
 
     node.vm.provision "shell",
