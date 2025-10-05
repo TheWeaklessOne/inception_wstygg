@@ -35,11 +35,6 @@ check:
 	@echo "[6/6] Verifying kubeconfig export..."
 	@[ -f shared/kubeconfig.yaml ] && echo "✅ kubeconfig.yaml exported" || (echo "❌ kubeconfig.yaml not found" && exit 1)
 	@grep -q "192.168.56.110:6443" shared/kubeconfig.yaml && echo "✅ kubeconfig server URL correct" || echo "❌ kubeconfig server URL incorrect"
-	@echo ""
-	@echo "💡 To use kubectl from host, install kubectl and run:"
-	@echo "   export KUBECONFIG=$$(pwd)/shared/kubeconfig.yaml"
-	@echo "   kubectl get nodes"
-	@echo ""
 
 doctor:
 	@echo "=== 🩺 Inception Part1 Diagnostics ==="

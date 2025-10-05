@@ -1,0 +1,18 @@
+# Vagrant
+.vagrant/
+.vagrant.d/
+
+# VirtualBox VM data (local storage for VMs)
+vm-data/
+
+# Exported kubeconfig (generated during provisioning)
+shared/kubeconfig.yaml
+
+# VirtualBox logs
+*.log
+
+# Vagrant box cache
+*.box
+
+# MacOS
+.DS_Store
