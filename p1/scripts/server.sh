@@ -1,116 +1,44 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
 SERVER_IP="${SERVER_IP:-192.168.56.110}"
 NODE_NAME="${NODE_NAME:-wstyggS}"
-
 SHARED_DIR="/vagrant_shared"
-KUBECONFIG_SRC="/etc/rancher/k3s/k3s.yaml"
-KUBECONFIG_DST="$SHARED_DIR/kubeconfig.yaml"
-TOKEN_SRC="/var/lib/rancher/k3s/server/node-token"
-TOKEN_DST="$SHARED_DIR/k3s_token"
 
-mkdir -p "$SHARED_DIR"
+echo "[INFO] Installing K3s server on ${NODE_NAME} (${SERVER_IP})..."
 
-echo "[INFO] Updating package list..."
-export DEBIAN_FRONTEND=noninteractive
-apt-get update -qq > /dev/null 2>&1
-echo "[INFO] Installing dependencies..."
-apt-get install -y -qq curl > /dev/null 2>&1
+# Install K3s server - let the installer handle everything
+curl -sfL https://get.k3s.io | sh -s - server \
+    --write-kubeconfig-mode=644 \
+    --node-name="${NODE_NAME}" \
+    --node-ip="${SERVER_IP}" \
+    --advertise-address="${SERVER_IP}" \
+    --tls-san="${SERVER_IP}"
 
-if systemctl is-active --quiet k3s; then
-  echo "K3s server already installed; ensuring artifacts are exported..."
-else
-  echo "Installing K3s server on ${NODE_NAME} (${SERVER_IP}) ..."
-  curl -sfL https://get.k3s.io | sh -s - server \
-    --node-name "$NODE_NAME" \
-    --node-ip "$SERVER_IP" \
-    --advertise-address "$SERVER_IP" \
-    --write-kubeconfig-mode 644 \
-    --tls-san "$SERVER_IP"
-fi
+echo "[INFO] Waiting for K3s to generate token and kubeconfig..."
 
-
-systemctl enable k3s >/dev/null 2>&1 || true
-
-echo "[INFO] Waiting for K3s server service to be active..."
-for i in $(seq 1 60); do
-  if systemctl is-active --quiet k3s; then
-    echo "[OK] K3s server is active (took ${i}s)"
-    break
-  fi
-  echo -n "."
-  sleep 1
+# Simple wait for token file
+until [ -f /var/lib/rancher/k3s/server/node-token ]; do
+    sleep 2
 done
 
-echo ""
-if ! systemctl is-active --quiet k3s; then
-  echo "[WARN] K3s server may still be starting. Check: sudo systemctl status k3s"
-  exit 1
-fi
-
-echo "[INFO] Waiting for K3s API to be fully ready at https://${SERVER_IP}:6443 ..."
-echo "[INFO] Checking /readyz endpoint (required for agent to retrieve certificates)..."
-echo "[INFO] This may take several minutes on minimal resources (1 CPU/1 GB RAM)..."
-
-# Wait up to 15 minutes for full API readiness
-# On minimal resources, SQLite initialization can be slow
-for i in $(seq 1 180); do
-  if curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
-    echo ""
-    echo "[OK] K3s API is fully ready and can serve agent requests (took $((i*5))s)"
-    break
-  fi
-  # Progress indicator every 30 seconds
-  if [ $((i % 6)) -eq 0 ]; then
-    echo ""
-    echo "[INFO] Still waiting for API readiness... ($((i*5))s elapsed)"
-  else
-    echo -n "."
-  fi
-  sleep 5
+# Simple wait for kubeconfig
+until [ -f /etc/rancher/k3s/k3s.yaml ]; do
+    sleep 2
 done
 
-echo ""
-if ! curl -sk --max-time 10 "https://${SERVER_IP}:6443/readyz" >/dev/null 2>&1; then
-  echo "[ERROR] K3s API /readyz did not respond within 15 minutes"
-  echo "[INFO] Server may still be initializing. Check: curl -sk https://${SERVER_IP}:6443/readyz"
-  echo "[INFO] This can happen on minimal resources due to SQLite initialization"
-  echo "[INFO] Try increasing VM resources or wait and check manually"
-  exit 1
-fi
+echo "[INFO] Exporting token and kubeconfig to shared directory..."
 
-# Now that API is fully ready, export kubeconfig and token for the worker
-# Wait for kubeconfig to be generated
-for i in $(seq 1 60); do
-  [ -f "$KUBECONFIG_SRC" ] && break
-  sleep 2
-done
+# Copy token
+mkdir -p "${SHARED_DIR}"
+cp /var/lib/rancher/k3s/server/node-token "${SHARED_DIR}/k3s_token"
+chmod 600 "${SHARED_DIR}/k3s_token"
 
-# Export kubeconfig with server URL pointing to the server IP
-if [ -f "$KUBECONFIG_SRC" ]; then
-  tmp="${KUBECONFIG_DST}.tmp"
-  cp "$KUBECONFIG_SRC" "$tmp"
-  # Replace 127.0.0.1 or localhost with the private IP for host-side kubectl
-  sed -E -i "s/server:\s+https:\/\/(127\.0\.0\.1|localhost):6443/server: https:\/\/${SERVER_IP}:6443/" "$tmp"
-  install -m 600 -o vagrant -g vagrant "$tmp" "$KUBECONFIG_DST"
-  rm -f "$tmp"
-  echo "Exported kubeconfig to $KUBECONFIG_DST"
-fi
+# Copy and fix kubeconfig
+cp /etc/rancher/k3s/k3s.yaml "${SHARED_DIR}/kubeconfig.yaml"
+sed -i "s/127.0.0.1/${SERVER_IP}/g" "${SHARED_DIR}/kubeconfig.yaml"
+chmod 600 "${SHARED_DIR}/kubeconfig.yaml"
 
-# Wait for join token to be generated
-for i in $(seq 1 60); do
-  [ -f "$TOKEN_SRC" ] && break
-  sleep 2
-done
-
-# Export token for worker join
-if [ -f "$TOKEN_SRC" ]; then
-  install -m 600 -o vagrant -g vagrant "$TOKEN_SRC" "$TOKEN_DST"
-  echo "Exported join token to $TOKEN_DST"
-else
-  echo "ERROR: K3s join token not found after waiting" >&2
-  exit 1
-fi
-
-exit 0
+echo "[SUCCESS] K3s server installation complete!"
+echo "[INFO] Token exported to: ${SHARED_DIR}/k3s_token"
+echo "[INFO] Kubeconfig exported to: ${SHARED_DIR}/kubeconfig.yaml"
