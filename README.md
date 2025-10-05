@@ -12,12 +12,14 @@ This repository contains Kubernetes manifests for the Inception Part 3 project, 
 ### Option 1: GitHub Actions (Web Interface) ⭐ RECOMMENDED
 
 1. Go to **Actions** tab in GitHub
-2. Select **Switch Application Version** workflow
+2. Select **Toggle Application Version** workflow
 3. Click **Run workflow**
-4. Choose version (v1 or v2) from dropdown
-5. Click **Run workflow** button
+4. Click green **Run workflow** button
 
-✨ The workflow will automatically update and push changes!
+✨ The workflow will automatically:
+   - Detect current version (v1 or v2)
+   - Toggle to the opposite version
+   - Commit and push changes!
 
 ### Option 2: Manual (Command Line)
 
